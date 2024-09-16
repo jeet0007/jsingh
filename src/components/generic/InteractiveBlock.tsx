@@ -3,6 +3,7 @@
 import { useCallback, useRef, MutableRefObject, useEffect } from "react";
 import { MousePosition, useMousePosition } from "../../app/hoc/useMousePosition";
 import { gsap } from "gsap";
+import { throttle } from "lodash";
 
 export const InteractiveBlock = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -15,55 +16,58 @@ export const InteractiveBlock = () => {
   const connectionStrength = 0.9; // Adjusts how strongly circles pull on each other
 
   const handleMouseMovement = useCallback((position: MousePosition) => {
-    const circles = circlesRef.current;
-    const { x: mouseX, y: mouseY } = position;
-    if (!mouseX || !mouseY) return;
+    throttle(() => {
+      const circles = circlesRef.current;
+      const { x: mouseX, y: mouseY } = position;
+      if (!mouseX || !mouseY) return;
 
-    // Calculate the movement for the bottom circle
-    const dx = mouseX - window.innerWidth / 2;
-    const dy = mouseY - window.innerHeight / 2;
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const angle = Math.atan2(dy, dx);
+      // Calculate the movement for the bottom circle
+      const dx = mouseX - window.innerWidth / 2;
+      const dy = mouseY - window.innerHeight / 2;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx);
 
-    const bottomCircleX = centerX + Math.min(distance, maxDistance) * Math.cos(angle) / 5;
-    const bottomCircleY = centerY + Math.min(distance, maxDistance) * Math.sin(angle) / 5;
+      const bottomCircleX = centerX + Math.min(distance, maxDistance) * Math.cos(angle) / 5;
+      const bottomCircleY = centerY + Math.min(distance, maxDistance) * Math.sin(angle) / 5;
 
-    // Animate each circle, influenced by the circle below it
-    for (let index = circles.length - 1; index >= 0; index--) {
-      const circle = circles[index];
-      if (!circle) continue;
+      // Animate each circle, influenced by the circle below it
+      for (let index = circles.length - 1; index >= 0; index--) {
+        const circle = circles[index];
+        if (!circle) continue;
 
-      if (index === circles.length - 1) {
-        // Bottom circle follows the mouse directly
-        gsap.to(circle, {
-          duration: 0.5,
-          attr: { cx: bottomCircleX, cy: bottomCircleY },
-          ease: "power2.out"
-        });
-      } else {
-        // Upper circles are pulled towards the circle below them
-        const childCircle = circles[index + 1];
-        if (!childCircle) continue;
+        if (index === circles.length - 1) {
+          // Bottom circle follows the mouse directly
+          gsap.to(circle, {
+            duration: 0.5,
+            attr: { cx: bottomCircleX, cy: bottomCircleY },
+            ease: "power2.out"
+          });
+        } else {
+          // Upper circles are pulled towards the circle below them
+          const childCircle = circles[index + 1];
+          if (!childCircle) continue;
 
-        const childX = parseFloat(childCircle.getAttribute('cx') || '0');
-        const childY = parseFloat(childCircle.getAttribute('cy') || '0');
-        const currentX = parseFloat(circle.getAttribute('cx') || '0');
-        const currentY = parseFloat(circle.getAttribute('cy') || '0');
+          const childX = parseFloat(childCircle.getAttribute('cx') || '0');
+          const childY = parseFloat(childCircle.getAttribute('cy') || '0');
+          const currentX = parseFloat(circle.getAttribute('cx') || '0');
+          const currentY = parseFloat(circle.getAttribute('cy') || '0');
 
-        const targetX = currentX + (childX - currentX) * connectionStrength;
-        const targetY = currentY + (childY - currentY) * connectionStrength;
+          const targetX = currentX + (childX - currentX) * connectionStrength;
+          const targetY = currentY + (childY - currentY) * connectionStrength;
 
-        gsap.to(circle, {
-          duration: 0.5,
-          attr: {
-            cx: targetX + (centerX - targetX) * springStrength,
-            cy: targetY + (centerY - targetY) * springStrength
-          },
-          ease: "power2.out"
-        });
+          gsap.to(circle, {
+            duration: 0.5,
+            attr: {
+              cx: targetX + (centerX - targetX) * springStrength,
+              cy: targetY + (centerY - targetY) * springStrength
+            },
+            ease: "power2.out"
+          });
+        }
       }
-    }
+    }, 100)();
   }, []);
+
 
   useMousePosition(handleMouseMovement);
   const circles = [

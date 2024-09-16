@@ -9,6 +9,7 @@ export const LinkButton = ({ href, children }) => {
         "bg-[#EEEEEE] font-bold text-base text-primary tracking-wider rounded-3xl",
         "px-6 py-4 border-none outline-none cursor-pointer",
         "transition-shadow duration-200 ease-in-out",
+        "text-sm md:text-base",
         "shadow-neumorphism hover:shadow-neumorphismHover active:shadow-neumorphismActive"
       )}
     >

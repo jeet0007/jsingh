@@ -22,13 +22,16 @@ const headerLinks = [
     href: "#contact",
   },
 ];
+
 export const Header = () => {
   return (
-    <div id="header">
-      <nav className="flex justify-end mb-8 p-2">
-        <ul className="flex space-x-4">
+    <div id="header" className="sticky top-0 bg-white z-50">
+      <nav className="flex justify-center md:justify-end mb-8 p-2">
+        <ul className="flex flex-row space-y-2 md:space-y-0 md:space-x-4">
           {headerLinks.map(({ name, href }) => (
-            <LinkButton key={name} href={href}>{name}</LinkButton>
+            <LinkButton key={name} href={href}>
+              {name}
+            </LinkButton>
           ))}
         </ul>
       </nav>
