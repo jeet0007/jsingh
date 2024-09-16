@@ -7,33 +7,31 @@ const headerLinks = [
   },
   {
     name: "About",
-    href: "/about",
+    href: "#about",
   },
   {
     name: "Projects",
-    href: "/projects",
+    href: "#projects",
+  },
+  {
+    name: "Blog",
+    href: "#blog",
   },
   {
     name: "Contact",
-    href: "/contact",
+    href: "#contact",
   },
 ];
 export const Header = () => {
   return (
     <div id="header">
-      <div className="px-12 py-8">
-        <div className="flex justify-end">
-          <div>
-            <ul className="flex space-x-4 ">
-              {headerLinks.map((link) => (
-                <li key={link.name}>
-                  <LinkButton href={link.href}>{link.name}</LinkButton>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
+      <nav className="flex justify-end mb-8 p-2">
+        <ul className="flex space-x-4">
+          {headerLinks.map(({ name, href }) => (
+            <LinkButton key={name} href={href}>{name}</LinkButton>
+          ))}
+        </ul>
+      </nav>
     </div>
   );
 };
