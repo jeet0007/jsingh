@@ -1,7 +1,6 @@
 "use client";
 import React from "react";
 import classnames from "classnames";
-import { joinClass } from "../../app/utils/base";
 
 interface ButtonProps extends React.ComponentPropsWithoutRef<"button"> {
   btnClass?: string;

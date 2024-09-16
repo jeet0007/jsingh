@@ -1,7 +1,7 @@
 import React from "react";
 import { InteractiveBlock } from "../components/generic/InteractiveBlock";
 import classNames from "classnames";
-import { About } from "../pages/about";
+import About from "../pages/about";
 
 export default function Page() {
   return (

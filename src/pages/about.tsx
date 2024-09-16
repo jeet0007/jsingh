@@ -1,6 +1,5 @@
 
-
-export const About = () => {
+const About = () => {
     return (
         <div className="flex flex-row" id="about">
             <div className="basis-1/2">
@@ -21,3 +20,5 @@ export const About = () => {
         </div>
     )
 }
+
+export default About;
