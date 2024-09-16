@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.neumorphic {
+  background: #f0f0f0;
+  box-shadow: 12px 12px 24px #cccccc, -12px -12px 24px #ffffff;
+}
+
+.neumorphic-inset {
+  background: #f0f0f0;
+  box-shadow: inset 12px 12px 24px #cccccc, inset -12px -12px 24px #ffffff;
+}
