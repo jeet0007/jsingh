@@ -11,7 +11,7 @@ export const InteractiveBlock = () => {
   const centerX = 100;
   const centerY = 100;
   const maxDistance = 40; // Maximum distance the top circle can move
-  const springStrength = 0.01; // Adjusts how quickly circles return to center
+  const springStrength = 0.02; // Adjusts how quickly circles return to center
   const connectionStrength = 0.9; // Adjusts how strongly circles pull on each other
 
   const handleMouseMovement = useCallback((position: MousePosition) => {
