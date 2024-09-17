@@ -1,15 +1,22 @@
 import Link from "next/link";
 import classnames from "classnames";
+import { FC } from "react";
 
-export const LinkButton = ({ href, children }) => {
+
+interface LinkButtonProps {
+  href: string;
+  classNames?: string;
+  onClick?: () => void;
+  children: React.ReactNode;
+}
+export const LinkButton: FC<LinkButtonProps> = ({ href, classNames, onClick, children }) => {
   return (
     <Link
       href={href}
+      onClick={onClick}
       className={classnames(
-        "bg-[#EEEEEE] font-bold text-base text-primary tracking-wider rounded-3xl",
-        "px-6 py-4 border-none outline-none cursor-pointer",
+        classNames,
         "transition-shadow duration-200 ease-in-out",
-        "text-sm md:text-base",
         "shadow-neumorphism hover:shadow-neumorphismHover active:shadow-neumorphismActive"
       )}
     >

@@ -1,51 +1,47 @@
 "use client";
 
-import { useCallback, useRef, MutableRefObject, useEffect } from "react";
-import { MousePosition, useMousePosition } from "../../app/hoc/useMousePosition";
+import { useCallback, useRef, MutableRefObject } from "react";
 import { gsap } from "gsap";
-import { throttle } from "lodash";
+import { Position, usePointerPosition } from "../../app/hoc/useMousePosition";
 
 export const InteractiveBlock = () => {
   const svgRef = useRef<SVGSVGElement | null>(null);
   const circlesRef: MutableRefObject<(SVGCircleElement | null)[]> = useRef([]);
 
-  const centerX = 100;
-  const centerY = 100;
-  const maxDistance = 40; // Maximum distance the top circle can move
-  const springStrength = 0.01; // Adjusts how quickly circles return to center
-  const connectionStrength = 0.9; // Adjusts how strongly circles pull on each other
+  const centerX = 50;
+  const centerY = 50;
+  const maxDistance = 20; // Reduced maximum distance for mobile
+  const springStrength = 0.05; // Increased for faster response
+  const connectionStrength = 0.8; // Slightly reduced for smoother movement
 
-  const handleMouseMovement = useCallback((position: MousePosition) => {
-    throttle(() => {
+  const handlePositionChange = useCallback((position: Position) => {
+
+    const animateCircles = () => {
+      if (!position.x || !position.y) return;
       const circles = circlesRef.current;
-      const { x: mouseX, y: mouseY } = position;
-      if (!mouseX || !mouseY) return;
+      const svgRect = svgRef.current?.getBoundingClientRect();
+      if (!svgRect) return;
 
-      // Calculate the movement for the bottom circle
-      const dx = mouseX - window.innerWidth / 2;
-      const dy = mouseY - window.innerHeight / 2;
+      const dx = position.x - (svgRect.left + svgRect.width / 2);
+      const dy = position.y - (svgRect.top + svgRect.height / 2);
       const distance = Math.sqrt(dx * dx + dy * dy);
       const angle = Math.atan2(dy, dx);
 
       const bottomCircleX = centerX + Math.min(distance, maxDistance) * Math.cos(angle) / 5;
       const bottomCircleY = centerY + Math.min(distance, maxDistance) * Math.sin(angle) / 5;
 
-      // Animate each circle, influenced by the circle below it
-      for (let index = circles.length - 1; index >= 0; index--) {
-        const circle = circles[index];
-        if (!circle) continue;
+      circles.forEach((circle, index) => {
+        if (!circle) return;
 
         if (index === circles.length - 1) {
-          // Bottom circle follows the mouse directly
           gsap.to(circle, {
-            duration: 0.5,
+            duration: 0.3,
             attr: { cx: bottomCircleX, cy: bottomCircleY },
             ease: "power2.out"
           });
         } else {
-          // Upper circles are pulled towards the circle below them
           const childCircle = circles[index + 1];
-          if (!childCircle) continue;
+          if (!childCircle) return;
 
           const childX = parseFloat(childCircle.getAttribute('cx') || '0');
           const childY = parseFloat(childCircle.getAttribute('cy') || '0');
@@ -56,7 +52,7 @@ export const InteractiveBlock = () => {
           const targetY = currentY + (childY - currentY) * connectionStrength;
 
           gsap.to(circle, {
-            duration: 0.5,
+            duration: 0.3,
             attr: {
               cx: targetX + (centerX - targetX) * springStrength,
               cy: targetY + (centerY - targetY) * springStrength
@@ -64,20 +60,22 @@ export const InteractiveBlock = () => {
             ease: "power2.out"
           });
         }
-      }
-    }, 100)();
+      });
+    };
+
+    requestAnimationFrame(animateCircles);
   }, []);
 
+  usePointerPosition(handlePositionChange);
 
-  useMousePosition(handleMouseMovement);
   const circles = [
-    { radius: 90, blur: 3, offset: 2, color: "#00000025" },
-    { radius: 55, blur: 2.5, offset: 1.5, color: '#b2acac44' },
-    { radius: 35, blur: 2, offset: 1, color: '#e0e0e0' },
-    { radius: 15, blur: 1.5, offset: 0.5, color: '#00000063' },
+    { radius: 45, blur: 2, offset: 1, color: "#00000025" },
+    { radius: 30, blur: 1.5, offset: 0.75, color: '#b2acac44' },
+    { radius: 15, blur: 1, offset: 0.5, color: '#e0e0e0' },
   ];
+
   return (
-    <svg ref={svgRef} viewBox="0 0 200 200" className="w-full h-full max-w-md mx-auto">
+    <svg ref={svgRef} viewBox="0 0 100 100" className="w-full h-full max-w-[300px] max-h-[300px] mx-auto">
       <defs>
         {circles.map((circle, index) => (
           <filter key={`filter-${index}`} id={`neumorphic-${index}`}>
@@ -96,8 +94,8 @@ export const InteractiveBlock = () => {
           </filter>
         ))}
         <radialGradient id="circleGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-          <stop offset="0%" style={{ stopColor: '#f2f2f2', stopOpacity: 0 }} /> {/* Light inner color */}
-          <stop offset="100%" style={{ stopColor: '#d9d9d9', stopOpacity: 10 }} /> {/* Slightly darker outer color */}
+          <stop offset="0%" style={{ stopColor: '#f2f2f2', stopOpacity: 0 }} />
+          <stop offset="100%" style={{ stopColor: '#d9d9d9', stopOpacity: 10 }} />
         </radialGradient>
       </defs>
       {circles.map((circle, index) => (
@@ -109,7 +107,7 @@ export const InteractiveBlock = () => {
           r={circle.radius}
           fill={circle.color ?? "url(#circleGradient)"}
           stroke="#e0e0e0"
-          strokeWidth="2"
+          strokeWidth="1"
           filter={`url(#neumorphic-${index})`}
         />
       ))}

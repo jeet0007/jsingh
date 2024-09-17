@@ -1,26 +1,37 @@
-"use client";
-import React from "react";
+import { useState, useCallback, useEffect } from "react";
 
-export interface MousePosition {
+export interface Position {
   x: number | null;
   y: number | null;
 }
 
-export const useMousePosition = (handleMouseMovement: (position: MousePosition) => void) => {
-  const [mousePosition, setMousePosition] = React.useState<MousePosition>({ x: null, y: null });
+export const usePointerPosition = (handlePositionChange: (position: Position) => void) => {
+  const [position, setPosition] = useState<Position>({ x: null, y: null });
 
-  const updateMousePosition = React.useCallback((ev: MouseEvent) => {
-    const newPosition = { x: ev.clientX, y: ev.clientY };
-    setMousePosition(newPosition);
-    handleMouseMovement(newPosition);
-  }, [handleMouseMovement]);
+  const updatePosition = useCallback(
+    (ev: MouseEvent | TouchEvent) => {
+      let newPosition: Position;
+      if (ev instanceof MouseEvent) {
+        newPosition = { x: ev.clientX, y: ev.clientY };
+      } else {
+        const touch = ev.touches[0];
+        newPosition = { x: touch.clientX, y: touch.clientY };
+      }
+      setPosition(newPosition);
+      handlePositionChange(newPosition);
+    },
+    [handlePositionChange]
+  );
 
-  React.useEffect(() => {
-    window.addEventListener("mousemove", updateMousePosition);
+  useEffect(() => {
+    window.addEventListener("mousemove", updatePosition);
+    window.addEventListener("touchmove", updatePosition);
 
-    return () => window.removeEventListener("mousemove", updateMousePosition);
-  }, [updateMousePosition]);
+    return () => {
+      window.removeEventListener("mousemove", updatePosition);
+      window.removeEventListener("touchmove", updatePosition);
+    };
+  }, [updatePosition]);
 
-  if (!mousePosition.x || !mousePosition.y) return null;
-  return mousePosition;
+  return position;
 };
