@@ -1,5 +1,5 @@
 "use server";
-  export async function generateScreenshot(url: string) {
+  export async function generateScreenshot(url: string, format: 'screenshot' | 'pageshot' = 'screenshot') {
         if (!url) {
             throw new Error('Invalid URL provided');
         }
@@ -10,7 +10,7 @@
                 method: 'POST',
                 body: JSON.stringify({ url }),
                 headers: {
-                    'X-Return-Format': 'pageshot',
+                    'X-Return-Format': format,
                     'Content-Type': 'application/json',
                 },
             });

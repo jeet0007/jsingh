@@ -8,9 +8,11 @@ import { generateScreenshot } from './actions';
 
 export default function UrlToScreenshot() {
     const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
+    const [imageFormat, setImageFormat] = useState<'screenshot' | 'pageshot'>('screenshot');
 
     const screenshotMutation = useMutation({
-        mutationFn: (url: string) => generateScreenshot(url),
+        mutationFn: (data: { url: string; format: 'screenshot' | 'pageshot' }) => 
+            generateScreenshot(data.url, data.format),
         onSuccess: (blob) => {
             const imageUrl = URL.createObjectURL(blob);
             setScreenshotUrl(imageUrl);
@@ -22,7 +24,7 @@ export default function UrlToScreenshot() {
 
     const handleSubmit = async (formData: FormData) => {
         const url = formData.get('url') as string;
-        screenshotMutation.mutate(url);
+        screenshotMutation.mutate({ url, format: imageFormat });
     };
 
     return (
@@ -32,7 +34,7 @@ export default function UrlToScreenshot() {
             </h1>
             
             <Form action={handleSubmit} className="mb-6">
-                <div className="flex space-x-2">
+                <div className="flex flex-col space-y-2">
                     <input 
                         type="text" 
                         name="url" 
@@ -40,6 +42,15 @@ export default function UrlToScreenshot() {
                         required 
                         className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
                     />
+                    <select
+                        name="imageFormat"
+                        value={imageFormat}
+                        onChange={(e) => setImageFormat(e.target.value as 'screenshot' | 'pageshot')}
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                    >
+                        <option value="screenshot">Screenshot</option>
+                        <option value="pageshot">Pageshot</option>
+                    </select>
                     <button 
                         type="submit"
                         disabled={screenshotMutation.isPending}
