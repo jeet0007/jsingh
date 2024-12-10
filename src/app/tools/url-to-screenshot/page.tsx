@@ -5,10 +5,26 @@ import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Form from 'next/form';
 import { generateScreenshot } from './actions';
+import { 
+    FaSpinner, 
+    FaDownload, 
+    FaCopy, 
+    FaInfoCircle 
+} from 'react-icons/fa';
 
 export default function UrlToScreenshot() {
     const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
     const [imageFormat, setImageFormat] = useState<'screenshot' | 'pageshot'>('screenshot');
+    const [error, setError] = useState<string | null>(null);
+
+    const validateUrl = (url: string) => {
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    };
 
     const screenshotMutation = useMutation({
         mutationFn: (data: { url: string; format: 'screenshot' | 'pageshot' }) => 
@@ -16,15 +32,44 @@ export default function UrlToScreenshot() {
         onSuccess: (blob) => {
             const imageUrl = URL.createObjectURL(blob);
             setScreenshotUrl(imageUrl);
+            setError(null);
         },
         onError: (error) => {
             console.error('Screenshot generation error:', error);
+            setError(error instanceof Error ? error.message : 'An unexpected error occurred');
         }
     });
 
     const handleSubmit = async (formData: FormData) => {
         const url = formData.get('url') as string;
+        
+        // Clear previous errors
+        setError(null);
+
+        // Validate URL
+        if (!validateUrl(url)) {
+            setError('Please enter a valid URL');
+            return;
+        }
+
+        // Reset error before mutation
         screenshotMutation.mutate({ url, format: imageFormat });
+    };
+
+    const handleDownload = () => {
+        if (screenshotUrl) {
+            const link = document.createElement('a');
+            link.href = screenshotUrl;
+            link.download = `url-image-${new Date().toISOString()}.png`;
+            link.click();
+        }
+    };
+
+    const handleCopyUrl = () => {
+        if (screenshotUrl) {
+            navigator.clipboard.writeText(screenshotUrl);
+            // Optional: Add a toast notification
+        }
     };
 
     return (
@@ -33,121 +78,103 @@ export default function UrlToScreenshot() {
                 URL to Image
             </h1>
             
+            {error && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {error}
+                </div>
+            )}
+            
+            {screenshotMutation.isError && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    {screenshotMutation.error instanceof Error 
+                        ? screenshotMutation.error.message 
+                        : 'An unexpected error occurred'}
+                </div>
+            )}
+            
             <Form action={handleSubmit} className="mb-6">
                 <div className="flex flex-col space-y-2">
                     <input 
                         type="text" 
                         name="url" 
+                        id="url-input"
                         placeholder="Enter URL to screenshot" 
                         required 
+                        aria-label="URL to generate image"
+                        aria-describedby="url-format-description"
                         className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
                     />
-                    <select
-                        name="imageFormat"
-                        value={imageFormat}
-                        onChange={(e) => setImageFormat(e.target.value as 'screenshot' | 'pageshot')}
-                        className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                    <p 
+                        id="url-format-description" 
+                        className="text-sm text-gray-600 dark:text-gray-400 mt-1"
                     >
-                        <option value="screenshot">Screenshot</option>
-                        <option value="pageshot">Pageshot</option>
-                    </select>
+                        Enter a full URL including https:// or http://
+                    </p>
+                    
+                    <div className="flex items-center space-x-2">
+                        <label htmlFor="image-format" className="text-gray-600 dark:text-gray-400">
+                            Image Format
+                        </label>
+                        <select
+                            name="imageFormat"
+                            value={imageFormat}
+                            onChange={(e) => setImageFormat(e.target.value as 'screenshot' | 'pageshot')}
+                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                        >
+                            <option value="screenshot">Screenshot</option>
+                            <option value="pageshot">Pageshot</option>
+                        </select>
+                    </div>
+                    
                     <button 
                         type="submit"
                         disabled={screenshotMutation.isPending}
-                        className={`px-4 py-2 rounded-md text-white transition-colors duration-300 ${
-                            screenshotMutation.isPending 
+                        className={`
+                            px-4 py-2 rounded-md text-white transition-colors duration-300 
+                            ${screenshotMutation.isPending 
                                 ? 'bg-gray-400 cursor-not-allowed' 
-                                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
-                        }`}
+                                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'}
+                        `}
                     >
-                        {screenshotMutation.isPending ? 'Generating...' : 'Generate Screenshot'}
+                        {screenshotMutation.isPending ? (
+                            <div className="flex items-center justify-center">
+                                <FaSpinner 
+                                    className="animate-spin h-5 w-5 mr-2" 
+                                />
+                                Generating...
+                            </div>
+                        ) : (
+                            'Generate Image'
+                        )}
                     </button>
                 </div>
             </Form>
 
-            {screenshotMutation.isError && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span className="block sm:inline">
-                        {screenshotMutation.error instanceof Error 
-                            ? screenshotMutation.error.message 
-                            : 'An unexpected error occurred'}
-                    </span>
-                </div>
-            )}
-
-            {screenshotMutation.isPending && (
-                <div className="flex justify-center items-center space-x-2 text-gray-600 dark:text-gray-300">
-                    <svg 
-                        className="animate-spin h-5 w-5" 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        fill="none" 
-                        viewBox="0 0 24 24"
-                    >
-                        <circle 
-                            className="opacity-25" 
-                            cx="12" 
-                            cy="12" 
-                            r="10" 
-                            stroke="currentColor" 
-                            strokeWidth="4"
-                        ></circle>
-                        <path 
-                            className="opacity-75" 
-                            fill="currentColor" 
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                    </svg>
-                    <span>Loading screenshot...</span>
-                </div>
-            )}
-
             {screenshotUrl && (
-                <div className="mt-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
-                            Generated Screenshot:
-                        </h2>
+                <div className="mt-4">
+                    <Image 
+                        src={screenshotUrl} 
+                        alt="Generated URL Screenshot" 
+                        width={500} 
+                        height={300} 
+                        className="w-full rounded-lg shadow-md"
+                    />
+                    
+                    <div className="mt-4 flex space-x-2">
                         <button 
-                            onClick={() => {
-                                if (screenshotUrl) {
-                                    const link = document.createElement('a');
-                                    link.href = screenshotUrl;
-                                    link.download = `screenshot_${new Date().toISOString().replace(/:/g, '-')}.png`;
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                }
-                            }}
-                            className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-300"
+                            onClick={handleDownload}
+                            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                         >
-                            <svg 
-                                xmlns="http://www.w3.org/2000/svg" 
-                                className="h-5 w-5" 
-                                viewBox="0 0 24 24" 
-                                fill="none" 
-                                stroke="currentColor" 
-                                strokeWidth="2" 
-                                strokeLinecap="round" 
-                                strokeLinejoin="round"
-                            >
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                <polyline points="7 10 12 15 17 10"></polyline>
-                                <line x1="12" y1="15" x2="12" y2="3"></line>
-                            </svg>
-                            <span>Download</span>
+                            <FaDownload className="mr-2" />
+                            Download
                         </button>
-                    </div>
-                    <div className="relative w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-                        <Image 
-                            src={screenshotUrl} 
-                            alt="Website Screenshot" 
-                            fill
-                            onLoadingComplete={() => {
-                                // Revoke object URL to free up memory
-                                URL.revokeObjectURL(screenshotUrl);
-                            }}
-                            className="object-contain" 
-                        />
+                        <button 
+                            onClick={handleCopyUrl}
+                            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                        >
+                            <FaCopy className="mr-2" />
+                            Copy URL
+                        </button>
                     </div>
                 </div>
             )}
