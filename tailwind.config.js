@@ -44,7 +44,14 @@ module.exports = {
               2px 2px 4px rgba(0, 0, 0, .1)",
 				neumorphismActive:
 					"2px 2px 2px rgba(255,255,255,0.5), inset -1px -1px 2px rgba(255,255,255,0.3), inset 1px 1px 2px rgba(0,0,0,0.1), inset 1px 2px 3px rgba(0,0,0,0.15)",
+				'neumorphism': '4px 4px 6px 0 rgba(0, 0, 0, 0.1), -4px -4px 6px 0 rgba(255, 255, 255, 0.7)',
+				'neumorphismActive': 'inset 4px 4px 6px 0 rgba(0, 0, 0, 0.1), inset -4px -4px 6px 0 rgba(255, 255, 255, 0.7)',
+				'neumorphismInput': '2px 2px 4px 0 rgba(0, 0, 0, 0.1), -2px -2px 4px 0 rgba(255, 255, 255, 0.7)',
+				'neumorphismInputActive': 'inset 2px 2px 4px 0 rgba(0, 0, 0, 0.1), inset -2px -2px 4px 0 rgba(255, 255, 255, 0.7)'
 			},
+			animation: {
+				'spin-slow': 'spin 1.5s linear infinite'
+			}
 		},
 	},
 	plugins: [require("tailwindcss-neumorphism")],

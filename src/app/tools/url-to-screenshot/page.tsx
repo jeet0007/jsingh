@@ -9,8 +9,8 @@ import {
     FaSpinner, 
     FaDownload, 
     FaCopy, 
-    FaInfoCircle 
 } from 'react-icons/fa';
+import classNames from 'classnames';
 
 export default function UrlToScreenshot() {
     const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
@@ -102,7 +102,15 @@ export default function UrlToScreenshot() {
                         required 
                         aria-label="URL to generate image"
                         aria-describedby="url-format-description"
-                        className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                        className={classNames(
+                            "w-full p-2 rounded-lg",
+                            "shadow-neumorphismInput",
+                            "focus:shadow-neumorphismInputActive",
+                            "bg-white dark:bg-gray-800",
+                            "text-gray-800 dark:text-gray-200",
+                            "placeholder-gray-500 dark:placeholder-gray-400",
+                            "focus:outline-none"
+                        )}
                     />
                     <p 
                         id="url-format-description" 
@@ -116,10 +124,18 @@ export default function UrlToScreenshot() {
                             Image Format
                         </label>
                         <select
+                            id="image-format"
                             name="imageFormat"
                             value={imageFormat}
                             onChange={(e) => setImageFormat(e.target.value as 'screenshot' | 'pageshot')}
-                            className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-gray-200"
+                            className={classNames(
+                                "p-2 rounded-lg",
+                                "shadow-neumorphismInput",
+                                "focus:shadow-neumorphismInputActive",
+                                "bg-white dark:bg-gray-800",
+                                "text-gray-800 dark:text-gray-200",
+                                "focus:outline-none"
+                            )}
                         >
                             <option value="screenshot">Screenshot</option>
                             <option value="pageshot">Pageshot</option>
@@ -129,12 +145,14 @@ export default function UrlToScreenshot() {
                     <button 
                         type="submit"
                         disabled={screenshotMutation.isPending}
-                        className={`
-                            px-4 py-2 rounded-md text-white transition-colors duration-300 
-                            ${screenshotMutation.isPending 
-                                ? 'bg-gray-400 cursor-not-allowed' 
-                                : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'}
-                        `}
+                        className={classNames(
+                            "btn btn-primary p-2 rounded-lg",
+                            "shadow-neumorphism active:shadow-neumorphismActive",
+                            "font-sans",
+                            screenshotMutation.isPending 
+                                ? 'opacity-50 cursor-not-allowed' 
+                                : ''
+                        )}
                     >
                         {screenshotMutation.isPending ? (
                             <div className="flex items-center justify-center">
