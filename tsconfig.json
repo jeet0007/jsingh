@@ -24,9 +24,20 @@
     "strictNullChecks": true,
     "baseUrl": "/",
     "paths": {
-      "@components/*": [
-        "./src/components/*"
-      ]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/api/*": ["./src/api/*"],
+      "@/assets/*": ["./src/assets/*"],
+      "@/contexts/*": ["./src/contexts/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/lib/*": ["./src/lib/*"],
+      "@/models/*": ["./src/models/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/public/*": ["./src/public/*"],
+      "@/styles/*": ["./src/styles/*"],
+      "@/tests/*": ["./src/tests/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/utils/*": ["./src/utils/*"]
     },
     "target": "ES2017"
   },

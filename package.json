@@ -12,6 +12,8 @@
 	"dependencies": {
 		"@fontsource/dm-sans": "^5.0.21",
 		"@netlify/plugin-nextjs": "^5.5.1",
+		"@tanstack/react-query": "^5.62.3",
+		"@tanstack/react-query-next-experimental": "^5.62.3",
 		"classnames": "^2.5.1",
 		"gsap": "^3.12.5",
 		"next": "^15.0.4",
@@ -22,7 +24,7 @@
 	},
 	"devDependencies": {
 		"@types/node": "^20.14.11",
-		"@types/react": "18.3.3",
+		"@types/react": "^19.0.1",
 		"autoprefixer": "^10.4.19",
 		"eslint": "^8",
 		"eslint-config-next": "14.2.5",

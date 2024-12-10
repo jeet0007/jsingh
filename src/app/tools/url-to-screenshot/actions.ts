@@ -1,8 +1,7 @@
 "use server";
-  export async function handleFormSubmit(formData: FormData) {
-        const url = formData.get('url') as string;
+  export async function generateScreenshot(url: string) {
         if (!url) {
-            return { error: 'Invalid URL provided' };
+            throw new Error('Invalid URL provided');
         }
         
         try {
@@ -17,18 +16,13 @@
             });
 
             if (!image.ok) {
-                return { error: `Failed to generate screenshot: ${image.status} ${image.statusText}` };
+                throw new Error(`Failed to generate screenshot: ${image.status} ${image.statusText}`);
             }
 
-            // Return the screenshot as a response
-            const blob = await image.blob();
-            return blob;
+            // Return the screenshot as a blob
+            return await image.blob();
         } catch (error) {
             console.error('Screenshot generation error:', error);
-            return { 
-                error: error instanceof Error 
-                    ? error.message 
-                    : 'Internal server error during screenshot generation' 
-            };
+            throw error;
         }
     }

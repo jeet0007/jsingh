@@ -1,50 +1,28 @@
 'use client';
 
 import { useState } from 'react';
-import Form from 'next/form';
+import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
-import { handleFormSubmit } from './actions';
+import Form from 'next/form';
+import { generateScreenshot } from './actions';
 
 export default function UrlToScreenshot() {
-    const [screenshot, setScreenshot] = useState<string | null>(null);
-    const [screenshotBlob, setScreenshotBlob] = useState<Blob | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
 
-    const onSubmit = async (formData: FormData) => {
-        setIsLoading(true);
-        setScreenshot(null);
-        setScreenshotBlob(null);
-        setError(null);
-        
-        try {
-            const result = await handleFormSubmit(formData);
-            
-            if (result instanceof Blob) {
-                const imageUrl = URL.createObjectURL(result);
-                setScreenshot(imageUrl);
-                setScreenshotBlob(result);
-            } else if (result.error) {
-                setError(result.error);
-            }
-        } catch (error) {
-            console.error('Client-side screenshot error:', error);
-            setError(error instanceof Error ? error.message : 'An unexpected error occurred');
-        } finally {
-            setIsLoading(false);
+    const screenshotMutation = useMutation({
+        mutationFn: (url: string) => generateScreenshot(url),
+        onSuccess: (blob) => {
+            const imageUrl = URL.createObjectURL(blob);
+            setScreenshotUrl(imageUrl);
+        },
+        onError: (error) => {
+            console.error('Screenshot generation error:', error);
         }
-    };
+    });
 
-    const handleDownload = () => {
-        if (!screenshotBlob) return;
-
-        // Create a link element and trigger download
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(screenshotBlob);
-        link.download = `screenshot_${new Date().toISOString().replace(/:/g, '-')}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    const handleSubmit = async (formData: FormData) => {
+        const url = formData.get('url') as string;
+        screenshotMutation.mutate(url);
     };
 
     return (
@@ -53,7 +31,7 @@ export default function UrlToScreenshot() {
                 URL to Screenshot
             </h1>
             
-            <Form action={onSubmit} className="mb-6">
+            <Form action={handleSubmit} className="mb-6">
                 <div className="flex space-x-2">
                     <input 
                         type="text" 
@@ -64,25 +42,29 @@ export default function UrlToScreenshot() {
                     />
                     <button 
                         type="submit"
-                        disabled={isLoading}
+                        disabled={screenshotMutation.isPending}
                         className={`px-4 py-2 rounded-md text-white transition-colors duration-300 ${
-                            isLoading 
+                            screenshotMutation.isPending 
                                 ? 'bg-gray-400 cursor-not-allowed' 
                                 : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
                         }`}
                     >
-                        {isLoading ? 'Generating...' : 'Generate Screenshot'}
+                        {screenshotMutation.isPending ? 'Generating...' : 'Generate Screenshot'}
                     </button>
                 </div>
             </Form>
 
-            {error && (
+            {screenshotMutation.isError && (
                 <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-                    <span className="block sm:inline">{error}</span>
+                    <span className="block sm:inline">
+                        {screenshotMutation.error instanceof Error 
+                            ? screenshotMutation.error.message 
+                            : 'An unexpected error occurred'}
+                    </span>
                 </div>
             )}
 
-            {isLoading && (
+            {screenshotMutation.isPending && (
                 <div className="flex justify-center items-center space-x-2 text-gray-600 dark:text-gray-300">
                     <svg 
                         className="animate-spin h-5 w-5" 
@@ -108,14 +90,23 @@ export default function UrlToScreenshot() {
                 </div>
             )}
 
-            {screenshot && (
+            {screenshotUrl && (
                 <div className="mt-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200">
                             Generated Screenshot:
                         </h2>
                         <button 
-                            onClick={handleDownload}
+                            onClick={() => {
+                                if (screenshotUrl) {
+                                    const link = document.createElement('a');
+                                    link.href = screenshotUrl;
+                                    link.download = `screenshot_${new Date().toISOString().replace(/:/g, '-')}.png`;
+                                    document.body.appendChild(link);
+                                    link.click();
+                                    document.body.removeChild(link);
+                                }
+                            }}
                             className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors duration-300"
                         >
                             <svg 
@@ -137,12 +128,12 @@ export default function UrlToScreenshot() {
                     </div>
                     <div className="relative w-full h-[400px] border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
                         <Image 
-                            src={screenshot} 
+                            src={screenshotUrl} 
                             alt="Website Screenshot" 
                             fill
                             onLoadingComplete={() => {
                                 // Revoke object URL to free up memory
-                                URL.revokeObjectURL(screenshot);
+                                URL.revokeObjectURL(screenshotUrl);
                             }}
                             className="object-contain" 
                         />
