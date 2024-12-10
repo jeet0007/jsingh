@@ -33,8 +33,8 @@ export default function Page() {
                 <h2>Tools</h2>
                 <ToolCard 
                     imageSrc="https://cdn1.iconfinder.com/data/icons/ios-11-glyphs/30/screenshot-512.png" 
-                    name="URL to Screenshot" 
-                    description="Convert a URL to a screenshot" 
+                    name="URL to Image" 
+                    description="Convert a URL to an image" 
                     route={ROUTES.URL_TO_SCREENSHOT} 
                 />
             </div>
