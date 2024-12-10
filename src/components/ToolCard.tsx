@@ -19,7 +19,6 @@ const ToolCard: React.FC<ToolCardProps> = ({ imageSrc, name, description, route 
                 width={200} 
                 height={100} 
                 style={{ borderRadius: '8px 8px 0 0' }} 
-                placeholder='blur'
                 />
                 <h3>{name}</h3>
                 <p>{description}</p>
