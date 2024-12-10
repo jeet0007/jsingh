@@ -1,14 +1,14 @@
 import classNames from "classnames";
 import React from "react";
-import { InteractiveBlock } from "../components/generic/InteractiveBlock";
-import About from "../pages/about";
+import Link from 'next/link';
+import ToolCard from '../components/ToolCard';
+import { ROUTES } from '../config/routes';
 
 export default function Page() {
 	return (
 		<div className="px-4 py-8 md:px-12">
 			<div className="flex flex-col-reverse md:flex-row-reverse">
 				<div className="w-full md:w-1/2">
-					<InteractiveBlock />
 				</div>
 				<div className="w-full md:w-1/2 text-center md:text-left">
 					<h2 className="text-2xl md:text-3xl font-bold mb-2">
@@ -18,6 +18,7 @@ export default function Page() {
 						Taranjit Singh
 					</h1>
 					<button
+						type="button"
 						className={classNames(
 							"btn btn-primary p-2 rounded-lg",
 							"shadow-neumorphism active:shadow-neumorphismActive",
@@ -28,11 +29,15 @@ export default function Page() {
 					</button>
 				</div>
 			</div>
-			<div className="flex flex-col md:flex-row mt-8" id="about">
-				<div className="w-full md:w-1/2">
-					<About />
-				</div>
-			</div>
+			<div style={{ marginTop: '40px' }}>
+                <h2>Tools</h2>
+                <ToolCard 
+                    imageSrc="https://cdn1.iconfinder.com/data/icons/ios-11-glyphs/30/screenshot-512.png" 
+                    name="URL to Screenshot" 
+                    description="Convert a URL to a screenshot" 
+                    route={ROUTES.URL_TO_SCREENSHOT} 
+                />
+            </div>
 		</div>
 	);
 }
