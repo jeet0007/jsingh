@@ -98,7 +98,7 @@ export default function UrlToScreenshot() {
                         type="text" 
                         name="url" 
                         id="url-input"
-                        placeholder="Enter URL to screenshot" 
+                        placeholder="Enter URL to generate image" 
                         required 
                         aria-label="URL to generate image"
                         aria-describedby="url-format-description"
@@ -129,6 +129,7 @@ export default function UrlToScreenshot() {
                             value={imageFormat}
                             onChange={(e) => setImageFormat(e.target.value as 'screenshot' | 'pageshot')}
                             className={classNames(
+                                'select',
                                 "p-2 rounded-lg",
                                 "shadow-neumorphismInput",
                                 "focus:shadow-neumorphismInputActive",
