@@ -19,6 +19,6 @@ export async function convertFormat(
     return JSON.stringify(jsonData, null, 2);
   } catch (error) {
     console.error("Conversion error:", error);
-    throw error;
+    throw new Error(`Failed to convert format (${format}): ${error instanceof Error ? error.message : String(error)}`);
   }
 }
