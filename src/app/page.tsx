@@ -29,14 +29,22 @@ export default function Page() {
 					</button>
 				</div>
 			</div>
-			<div style={{ marginTop: '40px' }}>
-                <h2>Tools</h2>
-                <ToolCard 
-                    imageSrc="https://cdn1.iconfinder.com/data/icons/ios-11-glyphs/30/screenshot-512.png" 
-                    name="URL to Image" 
-                    description="Convert a URL to an image" 
-                    route={ROUTES.URL_TO_SCREENSHOT} 
-                />
+			<div className="mt-10 text-center md:text-left grid sm:justify-center ">
+				<h2 className="text-2xl font-bold mb-6">Tools</h2>
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 ">
+					<ToolCard
+						imageSrc="https://cdn1.iconfinder.com/data/icons/ios-11-glyphs/30/screenshot-512.png"
+						name="URL to Image"
+						description="Convert a URL to an image"
+						route={ROUTES.URL_TO_SCREENSHOT}
+					/>
+					<ToolCard
+						imageSrc="https://cdn0.iconfinder.com/data/icons/video-edit-tools/32/transition_conversion_convert_transfer_motion_split_slide-512.png"
+						name="Format Converter"
+						description="Convert between JSON and YAML formats"
+						route={ROUTES.FORMAT_CONVERTER}
+					/>
+				</div>
             </div>
 		</div>
 	);
