@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { FaSpinner, FaCopy, FaExchangeAlt } from 'react-icons/fa';
+import { Highlight, themes } from 'prism-react-renderer';
 import classNames from 'classnames';
 import { convertFormat } from './actions';
 
@@ -111,7 +112,7 @@ export default function FormatConverter() {
                     {/* Output Section */}
                     <div className="flex-1">
                         <div className="mb-2 flex justify-between items-center">
-                            <label htmlFor="output-textarea" className="text-gray-700 dark:text-gray-300">Output</label>
+                            <label htmlFor="output-section" className="text-gray-700 dark:text-gray-300">Output</label>
                             <button
                                 onClick={handleCopy}
                                 disabled={!convertMutation.data}
@@ -127,17 +128,45 @@ export default function FormatConverter() {
                                 <FaCopy /> Copy
                             </button>
                         </div>
-                        <textarea
-                            id="output-textarea"
-                            value={convertMutation.data || ''}
-                            readOnly
+                        <div 
+                            id="output-section"
                             className={classNames(
-                                "w-full h-96 p-4 rounded-lg font-mono text-sm",
+                                "w-full h-96 rounded-lg overflow-auto",
                                 "shadow-neumorphismInput",
-                                "bg-background",
-                                "text-gray-800 dark:text-gray-200"
+                                "bg-background"
                             )}
-                        />
+                        >
+                            {convertMutation.data && (
+                                <Highlight
+                                    theme={themes.nightOwl}
+                                    code={convertMutation.data}
+                                    language={format === 'json-to-yaml' ? 'yaml' : 'json'}
+                                >
+                                    {({ className, style, tokens, getLineProps, getTokenProps }) => (
+                                        <pre 
+                                            className={classNames(
+                                                className,
+                                                "p-4 m-0 h-full",
+                                                "text-sm font-mono",
+                                                "bg-transparent"
+                                            )}
+                                            style={{
+                                                ...style,
+                                                background: 'transparent'
+                                            }}
+                                        >
+                                            {tokens.map((line, i) => (
+                                                <div key={i} {...getLineProps({ line })}>
+                                                    {line.map((token, key) => (
+                                                        <span key={key} {...getTokenProps({ token })} />
+                                                    ))}
+                                                </div>
+                                            ))}
+                                        </pre>
+                                    )}
+                                </Highlight>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
