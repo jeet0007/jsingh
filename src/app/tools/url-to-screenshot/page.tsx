@@ -181,6 +181,8 @@ export default function UrlToScreenshot() {
                     
                     <div className="mt-4 flex space-x-2">
                         <button 
+                            type='button'
+                            disabled={screenshotMutation.isPending}
                             onClick={handleDownload}
                             className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
                         >
@@ -188,6 +190,8 @@ export default function UrlToScreenshot() {
                             Download
                         </button>
                         <button 
+                            type='button'
+                            disabled={screenshotMutation.isPending}
                             onClick={handleCopyUrl}
                             className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
                         >
