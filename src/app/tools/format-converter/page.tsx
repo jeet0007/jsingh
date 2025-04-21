@@ -17,6 +17,9 @@ export default function FormatConverter() {
         onError: (error) => {
             setError(error instanceof Error ? error.message : 'Conversion failed');
         },
+        onSuccess: () => {
+            setError(null);
+        },
     });
 
     const handleConvert = () => {
@@ -36,7 +39,7 @@ export default function FormatConverter() {
     return (
         <div className="px-4 py-8 md:px-12">
             <div className={classNames(
-                "max-w-4xl mx-auto p-6 rounded-lg",
+                "min-w-4xl mx-auto p-6 rounded-lg",
                 "shadow-neumorphism",
                 "bg-background"
             )}>
@@ -128,7 +131,7 @@ export default function FormatConverter() {
                                 <FaCopy /> Copy
                             </button>
                         </div>
-                        <div 
+                        <div
                             id="output-section"
                             className={classNames(
                                 "w-full h-96 rounded-lg overflow-auto",
@@ -138,12 +141,12 @@ export default function FormatConverter() {
                         >
                             {convertMutation.data && (
                                 <Highlight
-                                    theme={themes.nightOwl}
+                                    theme={themes.vsLight}
                                     code={convertMutation.data}
                                     language={format === 'json-to-yaml' ? 'yaml' : 'json'}
                                 >
                                     {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                                        <pre 
+                                        <pre
                                             className={classNames(
                                                 className,
                                                 "p-4 m-0 h-full",
