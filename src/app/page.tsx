@@ -44,6 +44,12 @@ export default function Page() {
 						description="Convert between JSON and YAML formats"
 						route={ROUTES.FORMAT_CONVERTER}
 					/>
+					<ToolCard
+						imageSrc="https://cdn4.iconfinder.com/data/icons/multimedia-75/512/multimedia-02-512.png"
+						name="HLS Player"
+						description="Stream HLS videos with episode tracking"
+						route={ROUTES.HLS_PLAYER}
+					/>
 				</div>
             </div>
 		</div>

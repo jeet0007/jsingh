@@ -18,6 +18,11 @@ const nextConfig = {
         hostname: "cdn0.iconfinder.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn4.iconfinder.com",
+        pathname: "/**",
+      },
     ],
   },
   env: {},
