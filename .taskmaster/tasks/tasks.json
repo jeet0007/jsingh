@@ -1,0 +1,139 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Setup Project Foundation",
+        "description": "Initialize Next.js project with TypeScript, Tailwind CSS, and core dependencies",
+        "details": "Create Next.js 14+ project with TypeScript template. Install and configure Tailwind CSS, HLS.js, Video.js, and Zustand for state management. Set up project structure with components, hooks, utils, and types directories. Configure TypeScript strict mode and ESLint rules.",
+        "testStrategy": "Verify project builds without errors, TypeScript compilation passes, and all dependencies are properly installed and configured",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Implement Core Data Models and Types",
+        "description": "Define TypeScript interfaces for PlaybackHistory, EpisodeInfo, and PlayerSettings",
+        "details": "Create types/index.ts with PlaybackHistory interface (id, url, title, series, episode, currentTime, duration, watchProgress, lastWatched, thumbnail), EpisodeInfo interface (series, episode, title, baseUrl, urlPattern, totalEpisodes), and PlayerSettings interface (autoPlay, defaultVolume, preferredQuality, keyboardShortcuts, autoNext, resumePlayback). Include utility types for player states and actions.",
+        "testStrategy": "Ensure all interfaces compile correctly and provide proper type safety throughout the application",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Create localStorage Service",
+        "description": "Implement client-side data persistence layer for playback history and settings",
+        "details": "Create services/localStorage.ts with methods for saving/loading playback history, player settings, and episode data. Implement error handling for localStorage quota exceeded and browser compatibility. Add methods: savePlaybackHistory, getPlaybackHistory, savePlayerSettings, getPlayerSettings, clearHistory. Include data migration utilities for schema updates.",
+        "testStrategy": "Test localStorage operations in different browsers, handle quota exceeded scenarios, and verify data persistence across sessions",
+        "priority": "high",
+        "dependencies": [
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "Build HLS URL Input Component",
+        "description": "Create URL input field with validation and auto-play functionality",
+        "details": "Create components/URLInput.tsx with input field for HLS URLs, validation using regex for .m3u8 files, loading states, and play button. Implement URL validation function to check for valid HLS format. Add error handling for invalid URLs and network issues. Include paste detection and URL formatting.",
+        "testStrategy": "Test with various HLS URL formats, invalid URLs, network failures, and ensure proper error messaging",
+        "priority": "high",
+        "dependencies": [
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 5,
+        "title": "Implement Core Video Player",
+        "description": "Create HLS video player with basic controls using Video.js and HLS.js",
+        "details": "Create components/VideoPlayer.tsx using Video.js with HLS.js integration. Implement basic controls: play/pause, seek bar, volume control, fullscreen toggle. Configure HLS.js for adaptive bitrate streaming and cross-browser compatibility. Add loading states and error handling for playback failures. Include responsive design for mobile devices.",
+        "testStrategy": "Test HLS playback across browsers, verify adaptive bitrate switching, test fullscreen functionality, and ensure smooth seeking",
+        "priority": "high",
+        "dependencies": [
+          4
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Add Advanced Player Controls",
+        "description": "Implement playback speed control, quality selection, and enhanced seek functionality",
+        "details": "Extend VideoPlayer component with playback speed options (0.5x, 1x, 1.25x, 1.5x, 2x), quality/resolution selection menu, and enhanced seek bar with thumbnail previews. Implement custom Video.js plugins for speed control and quality selection. Add hover effects and smooth transitions for control elements.",
+        "testStrategy": "Test all playback speeds, verify quality switching works properly, and ensure thumbnail previews display correctly during seeking",
+        "priority": "medium",
+        "dependencies": [
+          5
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "Implement Comprehensive Keyboard Shortcuts",
+        "description": "Add all specified keyboard shortcuts for player control",
+        "details": "Create hooks/useKeyboardShortcuts.ts with event listeners for: Space/K (play/pause), F (fullscreen), M (mute), Arrow keys (seek/volume), J/L (seek), 0-9 (jump to percentage), Escape (exit fullscreen). Implement global keyboard event handling with proper focus management. Add visual feedback for shortcut actions and settings toggle.",
+        "testStrategy": "Test all keyboard shortcuts in different browser contexts, verify no conflicts with browser shortcuts, and ensure proper focus management",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Build Playback History and Resume System",
+        "description": "Create history tracking, display, and resume functionality",
+        "details": "Create components/PlaybackHistory.tsx for displaying recent videos with thumbnails, watch progress, and resume buttons. Implement automatic progress saving every 10 seconds during playback. Add resume dialog when returning to previously watched video. Include history cleanup (remove old entries) and search functionality. Generate thumbnails using canvas API.",
+        "testStrategy": "Test progress saving accuracy, resume functionality across sessions, history display with various data states, and thumbnail generation",
+        "priority": "medium",
+        "dependencies": [
+          7
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Implement Episode Detection and Auto-Next",
+        "description": "Create URL pattern recognition and automatic episode progression",
+        "details": "Create utils/episodeDetection.ts with regex patterns for common episode numbering schemes. Implement EpisodeManager component for manual episode input, auto-next toggle, and episode navigation. Add pattern learning from user corrections and fallback to manual input. Include episode list generation and series tracking.",
+        "testStrategy": "Test episode detection with various URL patterns, verify auto-next functionality, and ensure manual override works correctly",
+        "priority": "medium",
+        "dependencies": [
+          8
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 10,
+        "title": "Build Main Application Layout and State Management",
+        "description": "Create responsive layout with Zustand store for global state management",
+        "details": "Create stores/playerStore.ts with Zustand for managing player state, current video, history, and settings. Build main layout component with URL input, video player, episode controls, and history sidebar. Implement responsive design with mobile-first approach. Add loading states, error boundaries, and accessibility features (ARIA labels, keyboard navigation).",
+        "testStrategy": "Test responsive design across devices, verify state management works correctly, test accessibility with screen readers, and ensure proper error handling",
+        "priority": "medium",
+        "dependencies": [
+          9
+        ],
+        "status": "done",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-07-06T17:03:00.995Z",
+      "updated": "2025-07-06T17:22:53.387Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
