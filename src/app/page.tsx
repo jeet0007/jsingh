@@ -1,9 +1,8 @@
 import classNames from "classnames";
 import React from "react";
-import Link from 'next/link';
-import ToolCard from '../components/ToolCard';
-import { ROUTES } from '../config/routes';
-import { FaCamera, FaExchangeAlt, FaPlay } from "react-icons/fa";
+import ToolCard from "../components/ToolCard";
+import { ROUTES } from "../config/routes";
+import { FaPlay } from "react-icons/fa";
 
 export default function Page() {
 	return (
