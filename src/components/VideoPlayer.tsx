@@ -19,6 +19,7 @@ const loadHLS = async () => {
 const VideoPlayer: React.FC<HLSPlayerProps> = ({
   url,
   autoPlay = false,
+  startTime = 0,
   onTimeUpdate,
   onEpisodeEnd,
   onError,
@@ -27,6 +28,8 @@ const VideoPlayer: React.FC<HLSPlayerProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hlsRef = useRef<any>(null);
+  const hasSoughtRef = useRef<boolean>(false);
+  const lastStartTimeRef = useRef<number>(0);
 
   const [playerState, setPlayerState] = useState<PlayerState>("idle");
   const [isHLSLoaded, setIsHLSLoaded] = useState(false);
@@ -44,6 +47,10 @@ const VideoPlayer: React.FC<HLSPlayerProps> = ({
 
     const videoElement = videoRef.current;
     setPlayerState("loading");
+
+    // Reset seek tracking for new URLs
+    hasSoughtRef.current = false;
+    lastStartTimeRef.current = startTime;
 
     // Clean up existing HLS instance
     if (hlsRef.current) {
@@ -67,6 +74,13 @@ const VideoPlayer: React.FC<HLSPlayerProps> = ({
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
         setPlayerState("paused");
         onReady?.(); // Signal that video is ready
+
+        // Seek to start time if specified (for resuming from history)
+        if (startTime > 0 && !hasSoughtRef.current) {
+          videoElement.currentTime = startTime;
+          hasSoughtRef.current = true;
+        }
+
         if (autoPlay) {
           videoElement.play().catch(console.error);
         }
@@ -88,6 +102,13 @@ const VideoPlayer: React.FC<HLSPlayerProps> = ({
       videoElement.src = url;
       setPlayerState("paused");
       onReady?.(); // Signal that video is ready
+
+      // Seek to start time if specified (for resuming from history)
+      if (startTime > 0 && !hasSoughtRef.current) {
+        videoElement.currentTime = startTime;
+        hasSoughtRef.current = true;
+      }
+
       if (autoPlay) {
         videoElement.play().catch(console.error);
       }
@@ -107,6 +128,19 @@ const VideoPlayer: React.FC<HLSPlayerProps> = ({
       }
     };
   }, [url, isHLSLoaded, autoPlay, onError, onReady]);
+
+  // Handle seeking when startTime changes
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement || startTime <= 0) return;
+
+    // Only seek if startTime has changed and we haven't sought yet for this startTime
+    if (startTime !== lastStartTimeRef.current && !hasSoughtRef.current) {
+      videoElement.currentTime = startTime;
+      hasSoughtRef.current = true;
+      lastStartTimeRef.current = startTime;
+    }
+  }, [startTime]);
 
   // Video event listeners
   useEffect(() => {

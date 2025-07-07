@@ -1,12 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import {
-  FaHistory,
-  FaArrowLeft,
-  FaArrowRight,
-  FaCog,
-} from "react-icons/fa";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { FaHistory, FaArrowLeft, FaArrowRight, FaCog } from "react-icons/fa";
 import classNames from "classnames";
 import URLInput from "../../../components/URLInput";
 import VideoPlayer from "../../../components/VideoPlayer";
@@ -45,12 +40,16 @@ export default function HLSPlayerPage() {
   } = usePlayerStore();
 
   const [showSettings, setShowSettings] = useState(false);
+  const [resumeTime, setResumeTime] = useState<number>(0);
+  const hasInitialSaveRef = useRef<string | null>(null);
 
   // Handle URL submission
   const handleUrlSubmit = useCallback(
     (url: string, detectedEpisode?: EpisodeInfo) => {
       setLoading(true);
       setCurrentUrl(url);
+      setResumeTime(0); // Reset resume time for new URLs
+      hasInitialSaveRef.current = null; // Reset initial save tracking
 
       // Use detected episode or try to detect from URL
       const episodeInfo = detectedEpisode || detectEpisodeFromURL(url);
@@ -78,10 +77,18 @@ export default function HLSPlayerPage() {
       setCurrentUrl(item.url);
       setCurrentEpisode(episodeInfo);
       setCurrentTime(item.currentTime);
+      setResumeTime(item.currentTime); // Set the time to resume from
       setHistoryVisible(false);
       setError(null); // Clear any previous errors
     },
-    [setLoading, setCurrentUrl, setCurrentEpisode, setCurrentTime, setHistoryVisible, setError]
+    [
+      setLoading,
+      setCurrentUrl,
+      setCurrentEpisode,
+      setCurrentTime,
+      setHistoryVisible,
+      setError,
+    ]
   );
 
   // Memoized video player callbacks
@@ -126,13 +133,19 @@ export default function HLSPlayerPage() {
     }
   }, [playerState, currentTime, saveProgress]);
 
-  // Save progress when video starts playing for the first time
+  // Save initial progress when user starts watching (only once per URL)
   useEffect(() => {
-    if (playerState === "playing" && currentTime > 0 && currentUrl) {
-      // Save initial progress when user starts watching
+    if (
+      playerState === "playing" &&
+      currentTime > 1 &&
+      currentUrl &&
+      hasInitialSaveRef.current !== currentUrl
+    ) {
+      // Save initial progress when user has watched at least 1 second
+      hasInitialSaveRef.current = currentUrl;
       saveProgress();
     }
-  }, [playerState, currentUrl, currentTime, saveProgress]);
+  }, [playerState, currentTime, currentUrl, saveProgress]);
 
   // Clear loading state when video is ready (paused or playing)
   useEffect(() => {
@@ -217,6 +230,7 @@ export default function HLSPlayerPage() {
                 <VideoPlayer
                   url={currentUrl}
                   autoPlay={settings.autoPlay}
+                  startTime={resumeTime}
                   onTimeUpdate={handleTimeUpdate}
                   onEpisodeEnd={handleEpisodeEnd}
                   onError={handleVideoError}

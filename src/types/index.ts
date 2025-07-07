@@ -77,6 +77,7 @@ export interface PlayerError {
 export interface HLSPlayerProps {
   url?: string;
   autoPlay?: boolean;
+  startTime?: number;
   onTimeUpdate?: (currentTime: number, duration: number) => void;
   onEpisodeEnd?: () => void;
   onError?: (error: PlayerError) => void;
