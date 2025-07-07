@@ -4,13 +4,14 @@ import Image from 'next/image';
 import classNames from 'classnames';
 
 interface ToolCardProps {
-    imageSrc: string;
+    imageSrc?: string;
+    icon?: React.ComponentType<{ className?: string; size?: number }>;
     name: string;
     description: string;
     route: string;
 }
 
-const ToolCard: React.FC<ToolCardProps> = ({ imageSrc, name, description, route }) => {
+const ToolCard: React.FC<ToolCardProps> = ({ imageSrc, icon: Icon, name, description, route }) => {
     return (
         <Link href={route} className="block no-underline text-inherit">
             <div className={classNames(
@@ -21,13 +22,22 @@ const ToolCard: React.FC<ToolCardProps> = ({ imageSrc, name, description, route 
                 "transition-shadow duration-200 ease-in-out",
                 "cursor-pointer text-center"
             )}>
-                <Image 
-                    src={imageSrc}
-                    alt={name}
-                    width={200}
-                    height={100} 
-                    className="w-full rounded-t-lg mb-4 object-cover"
-                />
+                <div className="flex justify-center mb-4">
+                    {Icon ? (
+                        <Icon 
+                            className="text-gray-600 dark:text-gray-400" 
+                            size={80} 
+                        />
+                    ) : imageSrc ? (
+                        <Image 
+                            src={imageSrc}
+                            alt={name}
+                            width={80}
+                            height={80} 
+                            className="object-contain"
+                        />
+                    ) : null}
+                </div>
                 <h3 className="text-lg font-bold mb-2 text-gray-800 dark:text-gray-200">{name}</h3>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{description}</p>
             </div>

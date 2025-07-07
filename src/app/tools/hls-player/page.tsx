@@ -154,6 +154,17 @@ export default function HLSPlayerPage() {
     }
   }, [playerState, isLoading, setLoading]);
 
+  // Reset resume time when URL changes (for episode navigation)
+  useEffect(() => {
+    if (currentUrl && resumeTime > 0) {
+      // Only reset if this is episode navigation (not history resume)
+      const timeoutId = setTimeout(() => {
+        setResumeTime(0);
+      }, 100);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [currentUrl]);
+
   // Auto-next episode when video ends
   useEffect(() => {
     if (playerState === "ended" && autoNext && currentEpisode) {
@@ -228,6 +239,7 @@ export default function HLSPlayerPage() {
             {currentUrl && (
               <div className="space-y-4">
                 <VideoPlayer
+                  key={currentUrl} // Force re-render when URL changes
                   url={currentUrl}
                   autoPlay={settings.autoPlay}
                   startTime={resumeTime}

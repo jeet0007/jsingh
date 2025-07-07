@@ -33,8 +33,9 @@ export const detectEpisodeFromURL = (url: string): EpisodeInfo | null => {
             }
           }
 
-          // Generate URL pattern for auto-next
-          const urlPattern = url.replace(episodeNumber.toString(), '{episode}');
+          // Generate URL pattern for auto-next using the matched section
+          const matchedEpisodeStr = match[pattern.episodeIndex];
+          const urlPattern = url.replace(matchedEpisodeStr, '{episode}');
 
           return {
             series: seriesName,

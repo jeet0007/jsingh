@@ -132,6 +132,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       currentEpisode: nextEpisodeInfo,
       currentTime: 0,
       playerState: 'loading',
+      isLoading: true,
     });
   },
 
@@ -152,6 +153,7 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
       currentEpisode: prevEpisodeInfo,
       currentTime: 0,
       playerState: 'loading',
+      isLoading: true,
     });
   },
 

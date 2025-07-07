@@ -5,22 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "cdn1.iconfinder.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn2.iconfinder.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn0.iconfinder.com",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "cdn4.iconfinder.com",
+        hostname: "*.iconfinder.com",
         pathname: "/**",
       },
     ],
