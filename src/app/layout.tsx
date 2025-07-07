@@ -78,6 +78,7 @@ export default function RootLayout({
 				"@type": "SoftwareApplication",
 				"name": "JSON/YAML Format Converter",
 				"applicationCategory": "DeveloperApplication",
+				"url": "https://jsingh.dev/tools/format-converter",
 				"offers": {
 					"@type": "Offer",
 					"price": "0"
@@ -87,6 +88,17 @@ export default function RootLayout({
 				"@type": "SoftwareApplication",
 				"name": "URL to Screenshot",
 				"applicationCategory": "DeveloperApplication",
+				"url": "https://jsingh.dev/tools/url-to-screenshot",
+				"offers": {
+					"@type": "Offer",
+					"price": "0"
+				}
+			},
+			{
+				"@type": "SoftwareApplication",
+				"name": "HLS Player",
+				"applicationCategory": "DeveloperApplication",
+				"url": "https://jsingh.dev/tools/hls-player",
 				"offers": {
 					"@type": "Offer",
 					"price": "0"
