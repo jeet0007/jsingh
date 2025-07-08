@@ -30,23 +30,8 @@ export interface PlayerSettings {
   resumePlayback: boolean;
 }
 
-// Player state management types
+// Player state management types (simplified for Vidstack)
 export type PlayerState = 'idle' | 'loading' | 'playing' | 'paused' | 'ended' | 'error';
-
-export type PlaybackSpeed = 0.5 | 0.75 | 1 | 1.25 | 1.5 | 2;
-
-export type VideoQuality = {
-  height: number;
-  width: number;
-  bitrate: number;
-  label: string;
-};
-
-// Player action types
-export interface PlayerAction {
-  type: 'PLAY' | 'PAUSE' | 'SEEK' | 'SET_VOLUME' | 'SET_SPEED' | 'SET_QUALITY' | 'TOGGLE_FULLSCREEN' | 'LOAD_VIDEO' | 'SET_ERROR';
-  payload?: any;
-}
 
 // URL validation and episode detection
 export interface URLValidationResult {
