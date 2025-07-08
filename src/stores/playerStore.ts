@@ -5,13 +5,9 @@ import { PlayerState, EpisodeInfo, PlaybackHistory, PlayerSettings } from '../ty
 import { getPlayerSettings, savePlayerSettings, savePlaybackHistory } from '../services/localStorage';
 
 interface PlayerStore {
-  // Player state
+  // Player state (simplified - Vidstack handles media state)
   currentUrl: string | null;
   playerState: PlayerState;
-  currentTime: number;
-  duration: number;
-  volume: number;
-  isFullscreen: boolean;
   
   // Episode info
   currentEpisode: EpisodeInfo | null;
@@ -30,10 +26,6 @@ interface PlayerStore {
   // Actions
   setCurrentUrl: (url: string | null) => void;
   setPlayerState: (state: PlayerState) => void;
-  setCurrentTime: (time: number) => void;
-  setDuration: (duration: number) => void;
-  setVolume: (volume: number) => void;
-  setFullscreen: (isFullscreen: boolean) => void;
   setCurrentEpisode: (episode: EpisodeInfo | null) => void;
   setAutoNext: (autoNext: boolean) => void;
   updateSettings: (settings: Partial<PlayerSettings>) => void;
@@ -41,8 +33,7 @@ interface PlayerStore {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   
-  // Complex actions
-  saveProgress: () => void;
+  // Episode navigation
   playNextEpisode: () => void;
   playPreviousEpisode: () => void;
   reset: () => void;
@@ -52,10 +43,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   // Initial state
   currentUrl: null,
   playerState: 'idle',
-  currentTime: 0,
-  duration: 0,
-  volume: 0.8,
-  isFullscreen: false,
   currentEpisode: null,
   autoNext: getPlayerSettings().autoNext,
   settings: getPlayerSettings(),
@@ -66,13 +53,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   // Simple setters
   setCurrentUrl: (url) => set({ currentUrl: url, error: null }),
   setPlayerState: (playerState) => set({ playerState }),
-  setCurrentTime: (currentTime) => set({ currentTime }),
-  setDuration: (duration) => set({ duration }),
-  setVolume: (volume) => {
-    set({ volume });
-    get().updateSettings({ defaultVolume: volume });
-  },
-  setFullscreen: (isFullscreen) => set({ isFullscreen }),
   setCurrentEpisode: (currentEpisode) => set({ currentEpisode }),
   setAutoNext: (autoNext) => {
     set({ autoNext });
@@ -94,26 +74,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     savePlayerSettings(updatedSettings);
   },
 
-  // Save progress to localStorage
-  saveProgress: () => {
-    const state = get();
-    if (!state.currentUrl || state.duration === 0) return;
-
-    const historyItem: PlaybackHistory = {
-      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
-      url: state.currentUrl,
-      title: state.currentEpisode?.title,
-      series: state.currentEpisode?.series,
-      episode: state.currentEpisode?.episode,
-      currentTime: state.currentTime,
-      duration: state.duration,
-      watchProgress: (state.currentTime / state.duration) * 100,
-      lastWatched: new Date(),
-    };
-
-    savePlaybackHistory(historyItem);
-  },
-
   // Episode navigation
   playNextEpisode: () => {
     const state = get();
@@ -130,7 +90,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     set({
       currentUrl: nextUrl,
       currentEpisode: nextEpisodeInfo,
-      currentTime: 0,
       playerState: 'loading',
       isLoading: true,
     });
@@ -151,7 +110,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     set({
       currentUrl: prevUrl,
       currentEpisode: prevEpisodeInfo,
-      currentTime: 0,
       playerState: 'loading',
       isLoading: true,
     });
@@ -161,8 +119,6 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
   reset: () => set({
     currentUrl: null,
     playerState: 'idle',
-    currentTime: 0,
-    duration: 0,
     currentEpisode: null,
     isLoading: false,
     error: null,

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import { FaHistory, FaArrowLeft, FaArrowRight, FaCog } from "react-icons/fa";
 import classNames from "classnames";
 import URLInput from "../../../components/URLInput";
-import VideoPlayer from "../../../components/VideoPlayer";
+import VidstackPlayer from "../../../components/VidstackPlayer";
 import PlaybackHistory from "../../../components/PlaybackHistory";
 import { usePlayerStore } from "../../../stores/playerStore";
 import { detectEpisodeFromURL } from "../../../utils/episodeDetection";
@@ -17,7 +17,6 @@ export default function HLSPlayerPage() {
   const {
     currentUrl,
     playerState,
-    currentTime,
     currentEpisode,
     autoNext,
     settings,
@@ -26,22 +25,18 @@ export default function HLSPlayerPage() {
     error,
     setCurrentUrl,
     setPlayerState,
-    setCurrentTime,
-    setDuration,
     setCurrentEpisode,
     setAutoNext,
     updateSettings,
     setHistoryVisible,
     setLoading,
     setError,
-    saveProgress,
     playNextEpisode,
     playPreviousEpisode,
   } = usePlayerStore();
 
   const [showSettings, setShowSettings] = useState(false);
   const [resumeTime, setResumeTime] = useState<number>(0);
-  const hasInitialSaveRef = useRef<string | null>(null);
 
   // Handle URL submission
   const handleUrlSubmit = useCallback(
@@ -49,7 +44,6 @@ export default function HLSPlayerPage() {
       setLoading(true);
       setCurrentUrl(url);
       setResumeTime(0); // Reset resume time for new URLs
-      hasInitialSaveRef.current = null; // Reset initial save tracking
 
       // Use detected episode or try to detect from URL
       const episodeInfo = detectedEpisode || detectEpisodeFromURL(url);
@@ -67,7 +61,7 @@ export default function HLSPlayerPage() {
         ? {
             series: item.series,
             episode: item.episode || 1,
-            title: item.title,
+            title: item.title || `${item.series} Episode ${item.episode || 1}`,
             baseUrl: item.url.substring(0, item.url.lastIndexOf("/") + 1),
             urlPattern: item.url,
           }
@@ -76,7 +70,6 @@ export default function HLSPlayerPage() {
       setLoading(true); // Set loading when resuming from history
       setCurrentUrl(item.url);
       setCurrentEpisode(episodeInfo);
-      setCurrentTime(item.currentTime);
       setResumeTime(item.currentTime); // Set the time to resume from
       setHistoryVisible(false);
       setError(null); // Clear any previous errors
@@ -85,30 +78,25 @@ export default function HLSPlayerPage() {
       setLoading,
       setCurrentUrl,
       setCurrentEpisode,
-      setCurrentTime,
       setHistoryVisible,
       setError,
     ]
   );
 
-  // Memoized video player callbacks
+  // Simplified video player callbacks (Vidstack handles time/duration)
   const handleTimeUpdate = useCallback(
-    (time: number, total: number) => {
-      setCurrentTime(time);
-      setDuration(total);
+    (time: number, _duration: number) => {
       // Clear loading state when we get meaningful time updates
       if (isLoading && time > 0) {
         setLoading(false);
       }
     },
-    [setCurrentTime, setDuration, isLoading, setLoading]
+    [isLoading, setLoading]
   );
 
   const handleEpisodeEnd = useCallback(() => {
     setPlayerState("ended");
-    // Save final progress when episode ends
-    saveProgress();
-  }, [setPlayerState, saveProgress]);
+  }, [setPlayerState]);
 
   const handleVideoError = useCallback(
     (error: { message: string }) => {
@@ -118,34 +106,10 @@ export default function HLSPlayerPage() {
   );
 
   const handleVideoReady = useCallback(() => {
-    // Clear loading state when video is ready to play
     setLoading(false);
   }, [setLoading]);
 
-  // Save progress periodically and on key events
-  useEffect(() => {
-    if (playerState === "playing" && currentTime > 0) {
-      const interval = setInterval(() => {
-        saveProgress();
-      }, 10000); // Save every 10 seconds
-
-      return () => clearInterval(interval);
-    }
-  }, [playerState, currentTime, saveProgress]);
-
-  // Save initial progress when user starts watching (only once per URL)
-  useEffect(() => {
-    if (
-      playerState === "playing" &&
-      currentTime > 1 &&
-      currentUrl &&
-      hasInitialSaveRef.current !== currentUrl
-    ) {
-      // Save initial progress when user has watched at least 1 second
-      hasInitialSaveRef.current = currentUrl;
-      saveProgress();
-    }
-  }, [playerState, currentTime, currentUrl, saveProgress]);
+  // Vidstack handles progress saving automatically with storage prop
 
   // Clear loading state when video is ready (paused or playing)
   useEffect(() => {
@@ -163,7 +127,7 @@ export default function HLSPlayerPage() {
       }, 100);
       return () => clearTimeout(timeoutId);
     }
-  }, [currentUrl]);
+  }, [currentUrl, resumeTime]);
 
   // Auto-next episode when video ends
   useEffect(() => {
@@ -177,13 +141,6 @@ export default function HLSPlayerPage() {
     }
   }, [playerState, autoNext, currentEpisode, playNextEpisode]);
 
-  // Save progress when video first starts (for history recording)
-  useEffect(() => {
-    if (currentUrl && currentTime > 1) {
-      // Save progress when user has watched at least 1 second
-      saveProgress();
-    }
-  }, [currentUrl, currentTime, saveProgress]);
 
   return (
     <div className="min-h-screen bg-background p-4">
@@ -238,7 +195,7 @@ export default function HLSPlayerPage() {
             {/* Video Player */}
             {currentUrl && (
               <div className="space-y-4">
-                <VideoPlayer
+                <VidstackPlayer
                   key={currentUrl} // Force re-render when URL changes
                   url={currentUrl}
                   autoPlay={settings.autoPlay}
@@ -398,29 +355,6 @@ export default function HLSPlayerPage() {
                 </div>
               </div>
             )}
-
-            {/* Keyboard Shortcuts Help */}
-            <div
-              className={classNames(
-                "p-4 rounded-lg",
-                "shadow-neumorphism bg-background"
-              )}
-            >
-              <h3 className="font-medium text-gray-800 dark:text-gray-200 mb-3">
-                Keyboard Shortcuts
-              </h3>
-              <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-                <div>Space/K: Play/Pause</div>
-                <div>F: Fullscreen</div>
-                <div>M: Mute</div>
-                <div>←/→: Seek ±10s</div>
-                <div>↑/↓: Volume</div>
-                <div>0-9: Jump to %</div>
-                <div className="text-blue-600 dark:text-blue-400 mt-2">
-                  Built-in video controls
-                </div>
-              </div>
-            </div>
           </div>
 
           {/* History Sidebar */}
