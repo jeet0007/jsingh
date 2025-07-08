@@ -17,7 +17,12 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
 }) => {
   const playerRef = useRef<any>(null);
   const [isClient, setIsClient] = useState(false);
-  const [VidstackComponents, setVidstackComponents] = useState<any>(null);
+  const [VidstackComponents, setVidstackComponents] = useState<{
+    MediaPlayer: any;
+    MediaProvider: any;
+    PlyrLayout: any;
+    plyrLayoutIcons: any;
+  } | null>(null);
 
   // Ensure component only renders on client
   useEffect(() => {
