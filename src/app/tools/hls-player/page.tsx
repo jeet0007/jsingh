@@ -31,6 +31,7 @@ export default function HLSPlayerPage() {
     setHistoryVisible,
     setLoading,
     setError,
+    saveProgress,
     playNextEpisode,
     playPreviousEpisode,
   } = usePlayerStore();
@@ -83,20 +84,33 @@ export default function HLSPlayerPage() {
     ]
   );
 
+  // Progress tracking for history (simplified)
+  const lastSaveTimeRef = useRef<number>(0);
+
   // Simplified video player callbacks (Vidstack handles time/duration)
   const handleTimeUpdate = useCallback(
-    (time: number, _duration: number) => {
+    (time: number, duration: number) => {
       // Clear loading state when we get meaningful time updates
       if (isLoading && time > 0) {
         setLoading(false);
       }
+
+      // Save progress periodically (every 10 seconds)
+      if (duration > 0 && time > 0 && time - lastSaveTimeRef.current > 10) {
+        saveProgress(time, duration);
+        lastSaveTimeRef.current = time;
+      }
     },
-    [isLoading, setLoading]
+    [isLoading, setLoading, saveProgress]
   );
 
   const handleEpisodeEnd = useCallback(() => {
     setPlayerState("ended");
-  }, [setPlayerState]);
+    // Save final progress when episode ends
+    if (lastSaveTimeRef.current > 0) {
+      saveProgress(lastSaveTimeRef.current, lastSaveTimeRef.current); // Use last known time as duration fallback
+    }
+  }, [setPlayerState, saveProgress]);
 
   const handleVideoError = useCallback(
     (error: { message: string }) => {

@@ -103,10 +103,12 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
   }
 
   return (
-    <div className={classNames(
-      'w-full rounded-lg',
-      'shadow-neumorphism bg-background'
-    )}>
+    <div
+      className={classNames(
+        "w-full rounded-lg",
+        "shadow-neumorphism bg-background"
+      )}
+    >
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center justify-between mb-4">
@@ -116,11 +118,11 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
           <button
             onClick={() => setShowConfirmClear(true)}
             className={classNames(
-              'px-3 py-1 text-sm rounded',
-              'shadow-neumorphism active:shadow-neumorphismActive',
-              'text-red-600 dark:text-red-400',
-              'hover:bg-red-50 dark:hover:bg-red-900/20',
-              'transition-colors duration-200'
+              "px-3 py-1 text-sm rounded",
+              "shadow-neumorphism active:shadow-neumorphismActive",
+              "text-red-600 dark:text-red-400",
+              "hover:bg-red-50 dark:hover:bg-red-900/20",
+              "transition-colors duration-200"
             )}
           >
             Clear All
@@ -136,16 +138,16 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className={classNames(
-              'w-full pl-10 pr-4 py-2 rounded-lg',
-              'shadow-neumorphismInput focus:shadow-neumorphismInputActive',
-              'bg-background border-none outline-none',
-              'text-gray-800 dark:text-gray-200',
-              'placeholder:text-gray-500 dark:placeholder:text-gray-400'
+              "w-full pl-10 pr-4 py-2 rounded-lg",
+              "shadow-neumorphismInput focus:shadow-neumorphismInputActive",
+              "bg-background border-none outline-none",
+              "text-gray-800 dark:text-gray-200",
+              "placeholder:text-gray-500 dark:placeholder:text-gray-400"
             )}
           />
           {searchTerm && (
             <button
-              onClick={() => setSearchTerm('')}
+              onClick={() => setSearchTerm("")}
               className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
             >
               <FaTimes className="w-4 h-4" />
@@ -166,21 +168,23 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
               <div
                 key={item.id}
                 className={classNames(
-                  'p-4 rounded-lg',
-                  'shadow-neumorphismInput hover:shadow-neumorphismInputActive',
-                  'bg-background',
-                  'transition-shadow duration-200',
-                  'group cursor-pointer'
+                  "p-4 rounded-lg",
+                  "shadow-neumorphismInput hover:shadow-neumorphismInputActive",
+                  "bg-background",
+                  "transition-shadow duration-200",
+                  "group cursor-pointer"
                 )}
                 onClick={() => onSelect(item)}
               >
                 <div className="flex items-start space-x-4">
                   {/* Thumbnail placeholder */}
-                  <div className={classNames(
-                    'w-20 h-12 rounded bg-gray-200 dark:bg-gray-700',
-                    'flex items-center justify-center',
-                    'shadow-neumorphismInput'
-                  )}>
+                  <div
+                    className={classNames(
+                      "w-20 h-12 rounded bg-gray-200 dark:bg-gray-700",
+                      "flex items-center justify-center",
+                      "shadow-neumorphismInput"
+                    )}
+                  >
                     <FaPlay className="w-4 h-4 text-gray-400" />
                   </div>
 
@@ -189,11 +193,14 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
                     <div className="flex items-start justify-between">
                       <div className="flex-1 min-w-0">
                         {/* Title */}
-                        <h4 className={classNames(
-                          'font-medium text-gray-800 dark:text-gray-200',
-                          'truncate group-hover:text-blue-600 dark:group-hover:text-blue-400'
-                        )}>
-                          {item.title || 'Untitled Video'}
+                        <h4
+                          className={classNames(
+                            "font-medium text-gray-800 dark:text-gray-200",
+                            "truncate group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                          )}
+                        >
+                          {item.title ||
+                            `${item.series} Episode ${item.episode}`}
                         </h4>
 
                         {/* Series and Episode */}
@@ -218,10 +225,10 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
                             handleDelete(item.id);
                           }}
                           className={classNames(
-                            'p-2 rounded opacity-0 group-hover:opacity-100',
-                            'shadow-neumorphism active:shadow-neumorphismActive',
-                            'text-red-500 hover:text-red-600',
-                            'transition-all duration-200'
+                            "p-2 rounded opacity-0 group-hover:opacity-100",
+                            "shadow-neumorphism active:shadow-neumorphismActive",
+                            "text-red-500 hover:text-red-600",
+                            "transition-all duration-200"
                           )}
                           title="Delete from history"
                         >
@@ -233,8 +240,14 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
                     {/* Progress and Time Info */}
                     <div className="flex items-center justify-between mt-3 text-xs text-gray-500 dark:text-gray-500">
                       <div className="flex items-center space-x-4">
-                        <span>Progress: {formatProgress(item.currentTime, item.duration)}</span>
-                        <span>{formatTime(item.currentTime)} / {formatTime(item.duration)}</span>
+                        <span>
+                          Progress:{" "}
+                          {formatProgress(item.currentTime, item.duration)}
+                        </span>
+                        <span>
+                          {formatTime(item.currentTime)} /{" "}
+                          {formatTime(item.duration)}
+                        </span>
                       </div>
                       <span>{formatRelativeTime(item.lastWatched)}</span>
                     </div>
@@ -244,7 +257,11 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
                       <div
                         className="h-full bg-blue-500 transition-all duration-300"
                         style={{
-                          width: `${item.duration > 0 ? (item.currentTime / item.duration) * 100 : 0}%`
+                          width: `${
+                            item.duration > 0
+                              ? (item.currentTime / item.duration) * 100
+                              : 0
+                          }%`,
                         }}
                       />
                     </div>
@@ -259,23 +276,26 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
       {/* Clear Confirmation Modal */}
       {showConfirmClear && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className={classNames(
-            'bg-background rounded-lg p-6 max-w-sm mx-4',
-            'shadow-neumorphism'
-          )}>
+          <div
+            className={classNames(
+              "bg-background rounded-lg p-6 max-w-sm mx-4",
+              "shadow-neumorphism"
+            )}
+          >
             <h4 className="text-lg font-medium text-gray-800 dark:text-gray-200 mb-4">
               Clear All History?
             </h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-              This action cannot be undone. All your playback history will be permanently deleted.
+              This action cannot be undone. All your playback history will be
+              permanently deleted.
             </p>
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowConfirmClear(false)}
                 className={classNames(
-                  'flex-1 py-2 px-4 rounded',
-                  'shadow-neumorphism active:shadow-neumorphismActive',
-                  'text-gray-700 dark:text-gray-300'
+                  "flex-1 py-2 px-4 rounded",
+                  "shadow-neumorphism active:shadow-neumorphismActive",
+                  "text-gray-700 dark:text-gray-300"
                 )}
               >
                 Cancel
@@ -283,10 +303,10 @@ const PlaybackHistory: React.FC<Omit<HistoryListProps, 'history'>> = ({
               <button
                 onClick={handleClearAll}
                 className={classNames(
-                  'flex-1 py-2 px-4 rounded',
-                  'shadow-neumorphism active:shadow-neumorphismActive',
-                  'text-red-600 dark:text-red-400',
-                  'hover:bg-red-50 dark:hover:bg-red-900/20'
+                  "flex-1 py-2 px-4 rounded",
+                  "shadow-neumorphism active:shadow-neumorphismActive",
+                  "text-red-600 dark:text-red-400",
+                  "hover:bg-red-50 dark:hover:bg-red-900/20"
                 )}
               >
                 Clear All

@@ -33,6 +33,9 @@ interface PlayerStore {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
   
+  // Progress saving
+  saveProgress: (currentTime: number, duration: number) => void;
+  
   // Episode navigation
   playNextEpisode: () => void;
   playPreviousEpisode: () => void;
@@ -72,6 +75,26 @@ export const usePlayerStore = create<PlayerStore>((set, get) => ({
     const updatedSettings = { ...currentSettings, ...newSettings };
     set({ settings: updatedSettings });
     savePlayerSettings(updatedSettings);
+  },
+
+  // Save progress to our custom history format (simplified)
+  saveProgress: (currentTime: number, duration: number) => {
+    const state = get();
+    if (!state.currentUrl || duration === 0) return;
+
+    const historyItem: PlaybackHistory = {
+      id: `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
+      url: state.currentUrl,
+      title: state.currentEpisode?.title,
+      series: state.currentEpisode?.series,
+      episode: state.currentEpisode?.episode,
+      currentTime,
+      duration,
+      watchProgress: (currentTime / duration) * 100,
+      lastWatched: new Date(),
+    };
+
+    savePlaybackHistory(historyItem);
   },
 
   // Episode navigation
