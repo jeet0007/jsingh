@@ -150,12 +150,7 @@ export default function HLSPlayerPage() {
   // Auto-next episode when video ends
   useEffect(() => {
     if (playerState === "ended" && autoNext && currentEpisode) {
-      // Wait 3 seconds then play next episode
-      const timeout = setTimeout(() => {
-        playNextEpisode();
-      }, 3000);
-
-      return () => clearTimeout(timeout);
+      playNextEpisode();
     }
   }, [playerState, autoNext, currentEpisode, playNextEpisode]);
 
