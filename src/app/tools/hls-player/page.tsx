@@ -58,15 +58,19 @@ export default function HLSPlayerPage() {
   // Handle history item selection
   const handleHistorySelect = useCallback(
     (item: PlaybackHistoryType) => {
-      const episodeInfo = item.series
-        ? {
-            series: item.series,
-            episode: item.episode || 1,
-            title: item.title || `${item.series} Episode ${item.episode || 1}`,
-            baseUrl: item.url.substring(0, item.url.lastIndexOf("/") + 1),
-            urlPattern: item.url,
-          }
-        : detectEpisodeFromURL(item.url);
+      const episodeInfo =
+        item.series && item.episode
+          ? {
+              series: item.series,
+              episode: item.episode,
+              title: item.title || `${item.series} Episode ${item.episode}`,
+              baseUrl: item.url.substring(0, item.url.lastIndexOf("/") + 1),
+              urlPattern: item.url.replace(
+                item.episode.toString(),
+                "{episode}"
+              ),
+            }
+          : detectEpisodeFromURL(item.url);
 
       setLoading(true); // Set loading when resuming from history
       setCurrentUrl(item.url);
