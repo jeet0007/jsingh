@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { HLSPlayerProps } from "../types";
 import classNames from "classnames";
 import { FaSpinner } from "react-icons/fa";
+import NextEpisodeButton from "./NextEpisodeButton";
 
 const VidstackPlayer: React.FC<HLSPlayerProps> = ({
   url,
@@ -37,17 +38,17 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
       try {
         const [
           { MediaPlayer, MediaProvider },
-          { PlyrLayout, plyrLayoutIcons }
+          { PlyrLayout, plyrLayoutIcons },
         ] = await Promise.all([
           import("@vidstack/react"),
-          import("@vidstack/react/player/layouts/plyr")
+          import("@vidstack/react/player/layouts/plyr"),
         ]);
 
         setVidstackComponents({
           MediaPlayer,
           MediaProvider,
           PlyrLayout,
-          plyrLayoutIcons
+          plyrLayoutIcons,
         });
       } catch (error) {
         console.error("Failed to load Vidstack:", error);
@@ -99,7 +100,8 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
     );
   }
 
-  const { MediaPlayer, MediaProvider, PlyrLayout, plyrLayoutIcons } = VidstackComponents;
+  const { MediaPlayer, MediaProvider, PlyrLayout, plyrLayoutIcons } =
+    VidstackComponents;
 
   return (
     <div
@@ -117,10 +119,7 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
         onLoadedMetadata={(_: any) => onReady?.()}
         onEnded={onEpisodeEnd}
         onTimeUpdate={(detail: any, _: any) => {
-          onTimeUpdate?.(
-            detail.currentTime,
-            playerRef.current?.duration || 0
-          );
+          onTimeUpdate?.(detail.currentTime, playerRef.current?.duration || 0);
         }}
         onError={(detail: any, _: any) =>
           onError?.({
@@ -132,7 +131,12 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
         currentTime={startTime || 0}
       >
         <MediaProvider />
-        <PlyrLayout icons={plyrLayoutIcons} />
+        <PlyrLayout
+          icons={plyrLayoutIcons}
+          slots={{
+            beforeFullscreenButton: <NextEpisodeButton />,
+          }}
+        />
       </MediaPlayer>
     </div>
   );

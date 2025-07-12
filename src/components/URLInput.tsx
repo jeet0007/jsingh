@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { FaPlay, FaSpinner, FaPaste, FaTimes, FaCheckCircle } from 'react-icons/fa';
+import { FaPlay, FaSpinner, FaCopy, FaTimes, FaCheckCircle } from 'react-icons/fa';
 import classNames from 'classnames';
 import { URLValidationResult, EpisodeInfo } from '../types';
 
@@ -140,16 +140,15 @@ const URLInput: React.FC<URLInputProps> = ({
     }
   };
 
-  // Handle paste button click
-  const handlePaste = async () => {
+  // Handle copy button click
+  const handleCopy = async () => {
     try {
-      const text = await navigator.clipboard.readText();
-      if (text) {
-        handleUrlChange(text);
-        inputRef.current?.focus();
+      if (url) {
+        await navigator.clipboard.writeText(url);
+        // Could add a toast notification here
       }
     } catch (error) {
-      // Silently handle clipboard error
+      console.warn('Clipboard write failed:', error);
     }
   };
 
@@ -199,11 +198,11 @@ const URLInput: React.FC<URLInputProps> = ({
             
             {/* Action Buttons */}
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
-              {/* Paste Button */}
-              {isClient && navigator.clipboard && (
+              {/* Copy Button */}
+              {isClient && navigator.clipboard && url && (
                 <button
                   type="button"
-                  onClick={handlePaste}
+                  onClick={handleCopy}
                   disabled={disabled || isLoading}
                   className={classNames(
                     'p-2 rounded',
@@ -213,9 +212,9 @@ const URLInput: React.FC<URLInputProps> = ({
                     'transition-all duration-200',
                     disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
                   )}
-                  title="Paste from clipboard"
+                  title="Copy URL to clipboard"
                 >
-                  <FaPaste className="w-3 h-3" />
+                  <FaCopy className="w-3 h-3" />
                 </button>
               )}
               

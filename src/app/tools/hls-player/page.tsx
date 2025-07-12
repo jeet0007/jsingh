@@ -187,7 +187,7 @@ export default function HLSPlayerPage() {
               <URLInput
                 onSubmit={handleUrlSubmit}
                 isLoading={isLoading}
-                disabled={playerState === "loading"}
+                disabled={isLoading}
                 initialUrl={currentUrl || ""}
               />
             </div>
