@@ -8,6 +8,7 @@ import VidstackPlayer from "../../../components/VidstackPlayer";
 import PlaybackHistory from "../../../components/PlaybackHistory";
 import { usePlayerStore } from "../../../stores/playerStore";
 import { detectEpisodeFromURL } from "../../../utils/episodeDetection";
+import { getCurrentSession } from "../../../services/localStorage";
 import {
   EpisodeInfo,
   PlaybackHistory as PlaybackHistoryType,
@@ -34,10 +35,23 @@ export default function HLSPlayerPage() {
     saveProgress,
     playNextEpisode,
     playPreviousEpisode,
+    restoreSession,
   } = usePlayerStore();
 
   const [showSettings, setShowSettings] = useState(false);
   const [resumeTime, setResumeTime] = useState<number>(0);
+  
+  // Restore session after mount to avoid hydration mismatch
+  useEffect(() => {
+    // Restore session data after client hydration
+    restoreSession();
+    
+    // Also restore resume time from session
+    const savedSession = getCurrentSession();
+    if (savedSession?.currentTime && savedSession.currentTime > 0) {
+      setResumeTime(savedSession.currentTime);
+    }
+  }, [restoreSession]);
 
   // Handle URL submission
   const handleUrlSubmit = useCallback(

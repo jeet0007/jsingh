@@ -3,11 +3,25 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { FaSpinner, FaCopy, FaExchangeAlt } from 'react-icons/fa';
-import { Highlight, themes } from 'prism-react-renderer';
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
+import QueryProviderWrapper from '../../../components/QueryProviderWrapper';
 import { convertFormat } from './actions';
 
-export default function FormatConverter() {
+// Dynamic import for Prism renderer - only loads when needed
+const CodeHighlight = dynamic(
+  () => import('./CodeHighlight'),
+  {
+    loading: () => (
+      <div className="p-4 h-full flex items-center justify-center">
+        <FaSpinner className="animate-spin h-6 w-6 text-gray-600" />
+      </div>
+    ),
+    ssr: false,
+  }
+);
+
+function FormatConverterInner() {
     const [input, setInput] = useState('');
     const [format, setFormat] = useState<'json-to-yaml' | 'yaml-to-json'>('json-to-yaml');
     const [error, setError] = useState<string | null>(null);
@@ -140,39 +154,23 @@ export default function FormatConverter() {
                             )}
                         >
                             {convertMutation.data && (
-                                <Highlight
-                                    theme={themes.vsLight}
+                                <CodeHighlight
                                     code={convertMutation.data}
                                     language={format === 'json-to-yaml' ? 'yaml' : 'json'}
-                                >
-                                    {({ className, style, tokens, getLineProps, getTokenProps }) => (
-                                        <pre
-                                            className={classNames(
-                                                className,
-                                                "p-4 m-0 h-full",
-                                                "text-sm font-mono",
-                                                "bg-transparent"
-                                            )}
-                                            style={{
-                                                ...style,
-                                                background: 'transparent'
-                                            }}
-                                        >
-                                            {tokens.map((line, i) => (
-                                                <div key={i} {...getLineProps({ line })}>
-                                                    {line.map((token, key) => (
-                                                        <span key={key} {...getTokenProps({ token })} />
-                                                    ))}
-                                                </div>
-                                            ))}
-                                        </pre>
-                                    )}
-                                </Highlight>
+                                />
                             )}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function FormatConverter() {
+    return (
+        <QueryProviderWrapper>
+            <FormatConverterInner />
+        </QueryProviderWrapper>
     );
 }

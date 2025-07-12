@@ -1,12 +1,13 @@
 'use client';
 
-import { PlaybackHistory, PlayerSettings, StorageData } from "../types";
+import { PlaybackHistory, PlayerSettings, StorageData, SessionState, EpisodeInfo } from "../types";
 
 
 // Storage keys
 const STORAGE_KEYS = {
   PLAYBACK_HISTORY: 'hls-player-history',
   PLAYER_SETTINGS: 'hls-player-settings',
+  CURRENT_SESSION: 'hls-player-session',
   DATA_VERSION: 'hls-player-version',
 } as const;
 
@@ -240,6 +241,68 @@ export const getStorageStats = () => {
   };
 };
 
+// Session State Functions
+export const saveCurrentSession = (
+  url: string | null,
+  episode: EpisodeInfo | null,
+  currentTime: number = 0
+): boolean => {
+  if (!isLocalStorageAvailable()) return false;
+
+  try {
+    const sessionState: SessionState = {
+      currentUrl: url,
+      currentEpisode: episode,
+      currentTime,
+      lastUpdated: new Date(),
+    };
+
+    return safeSetItem(STORAGE_KEYS.CURRENT_SESSION, JSON.stringify(sessionState));
+  } catch (error) {
+    console.error('Failed to save current session:', error);
+    return false;
+  }
+};
+
+export const getCurrentSession = (): SessionState | null => {
+  if (!isLocalStorageAvailable()) return null;
+
+  try {
+    const sessionJson = localStorage.getItem(STORAGE_KEYS.CURRENT_SESSION);
+    if (!sessionJson) return null;
+
+    const session = safeJsonParse(sessionJson, null as SessionState | null);
+    if (!session) return null;
+
+    // Convert date string back to Date object
+    session.lastUpdated = new Date(session.lastUpdated);
+
+    // Check if session is not too old (e.g., more than 24 hours)
+    const hoursSinceUpdate = (Date.now() - session.lastUpdated.getTime()) / (1000 * 60 * 60);
+    if (hoursSinceUpdate > 24) {
+      clearCurrentSession();
+      return null;
+    }
+
+    return session;
+  } catch (error) {
+    console.error('Failed to get current session:', error);
+    return null;
+  }
+};
+
+export const clearCurrentSession = (): boolean => {
+  if (!isLocalStorageAvailable()) return false;
+
+  try {
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_SESSION);
+    return true;
+  } catch (error) {
+    console.error('Failed to clear current session:', error);
+    return false;
+  }
+};
+
 // Clear all data
 export const clearAllData = (): boolean => {
   if (!isLocalStorageAvailable()) return false;
@@ -247,6 +310,7 @@ export const clearAllData = (): boolean => {
   try {
     localStorage.removeItem(STORAGE_KEYS.PLAYBACK_HISTORY);
     localStorage.removeItem(STORAGE_KEYS.PLAYER_SETTINGS);
+    localStorage.removeItem(STORAGE_KEYS.CURRENT_SESSION);
     localStorage.removeItem(STORAGE_KEYS.DATA_VERSION);
     return true;
   } catch (error) {

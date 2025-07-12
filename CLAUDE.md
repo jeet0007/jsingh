@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Development workflow
-yarn dev                    # Start development server with turbo
+yarn dev                    # Start development server with Turbopack
 yarn build                  # Build production version
 yarn start                  # Start production server
 yarn lint                   # Run ESLint
@@ -44,10 +44,11 @@ task-master update-subtask --id=<id> --prompt="notes"        # Add implementatio
 - **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript with strict mode
 - **Styling**: Tailwind CSS with custom neumorphism design system
-- **State Management**: TanStack Query for server state
+- **State Management**: TanStack Query for server state, Zustand for client state
 - **Deployment**: Netlify with Next.js plugin
 - **Icons**: React Icons
-- **Syntax Highlighting**: Prism React Renderer
+- **Video Player**: Vidstack for HLS video playback
+- **Syntax Highlighting**: Prism React Renderer (dynamically loaded)
 
 ### Application Structure
 
@@ -62,16 +63,32 @@ src/
 │       │   ├── actions.ts   # Server actions for format conversion
 │       │   ├── metadata.ts  # SEO metadata
 │       │   └── page.tsx     # Format converter UI
-│       └── url-to-screenshot/
-│           ├── actions.ts   # Server actions for screenshot
+│       ├── url-to-screenshot/
+│       │   ├── actions.ts   # Server actions for screenshot
+│       │   ├── metadata.ts  # SEO metadata
+│       │   └── page.tsx     # URL to screenshot UI
+│       └── hls-player/
 │           ├── metadata.ts  # SEO metadata
-│           └── page.tsx     # URL to screenshot UI
+│           └── page.tsx     # HLS video player UI
 ├── components/
 │   ├── JsonLd.tsx          # Structured data component
 │   ├── QueryProvider.tsx   # TanStack Query provider
-│   └── ToolCard.tsx        # Reusable tool card component
-└── config/
-    └── routes.ts           # Centralized route definitions
+│   ├── ToolCard.tsx        # Reusable tool card component
+│   ├── VidstackPlayer.tsx  # HLS video player component
+│   ├── URLInput.tsx        # URL input with clipboard functionality
+│   ├── PlaybackHistory.tsx # Video playback history component
+│   └── NextEpisodeButton.tsx # Episode navigation component
+├── config/
+│   ├── routes.ts           # Centralized route definitions
+│   └── hlsConfig.ts        # HLS.js optimization configurations
+├── stores/
+│   └── playerStore.ts      # Zustand store for player state
+├── services/
+│   └── localStorage.ts     # Local storage utilities
+├── types/
+│   └── index.ts            # TypeScript type definitions
+└── utils/
+    └── episodeDetection.ts # Episode detection utilities
 ```
 
 ### Design System
@@ -88,10 +105,12 @@ The project uses a custom neumorphism design system:
 Each tool follows a consistent pattern:
 
 1. **Page Component** (`page.tsx`): Client-side UI with form handling
-2. **Server Actions** (`actions.ts`): Server-side logic with proper error handling
+2. **Server Actions** (`actions.ts`): Server-side logic with proper error handling (for server-side tools)
 3. **Metadata** (`metadata.ts`): SEO optimization and structured data
 4. **Route Registration**: Add to `src/config/routes.ts`
 5. **Homepage Integration**: Add ToolCard to main page
+
+For client-side tools (like HLS Player), use Zustand stores for state management and skip server actions.
 
 ### Key Design Principles
 
@@ -99,8 +118,29 @@ Each tool follows a consistent pattern:
 - **Error Handling**: Comprehensive error handling with user-friendly messages
 - **Accessibility**: Proper ARIA labels and semantic HTML
 - **SEO**: Rich metadata, structured data, and OpenGraph tags
-- **Performance**: TanStack Query for efficient state management
+- **Performance**: TanStack Query for server state, local storage for persistence
 - **Responsive**: Mobile-first design with Tailwind breakpoints
+- **State Persistence**: Use localStorage service for client-side data persistence
+- **Video Optimization**: Use optimized HLS configurations for smooth streaming
+
+### HLS Player Configuration
+
+The project includes optimized HLS.js configurations in `src/config/hlsConfig.ts`:
+
+- **`optimizedHLSConfig`**: Default configuration optimized for good network conditions
+  - Concurrent segment loading for better performance
+  - Aggressive buffering (60s buffer, 120MB max)
+  - Optimized retry policies with zero delays
+  - Enhanced network timeouts and error handling
+
+- **`liveStreamHLSConfig`**: Configuration for live streaming content
+  - Lower latency settings
+  - Reduced buffer for real-time performance
+  - Live sync optimizations
+
+- **`conservativeHLSConfig`**: Configuration for slower network connections
+  - Smaller buffers and more conservative timeouts
+  - Patient retry strategies for limited bandwidth
 
 ## Development Workflow
 
@@ -108,11 +148,13 @@ Each tool follows a consistent pattern:
 
 1. Create tool directory under `src/app/tools/`
 2. Implement page component with form and mutation handling
-3. Create server action for backend logic
+3. Create server action for backend logic (if needed) or Zustand store for client state
 4. Add metadata file for SEO
 5. Register route in `src/config/routes.ts`
 6. Add ToolCard to homepage
 7. Update layout structured data if needed
+8. For video/media tools, consider using Vidstack components
+9. Use localStorage service for data persistence when needed
 
 ### Styling Guidelines
 

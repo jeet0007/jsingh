@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import type React from "react";
 import "./globals.css";
 import "@fontsource/dm-sans";
-import QueryProvider from '../components/QueryProvider';
 import JsonLd from '../components/JsonLd';
 
 export const metadata: Metadata = {
@@ -115,9 +114,7 @@ export default function RootLayout({
 				<JsonLd data={websiteSchema} />
 			</head>
 			<body className="bg-background">
-				<QueryProvider>
-					{children}
-				</QueryProvider>
+				{children}
 			</body>
 		</html>
 	);

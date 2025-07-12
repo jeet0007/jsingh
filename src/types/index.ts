@@ -50,6 +50,14 @@ export interface StorageData {
   version: string; // For data migration
 }
 
+// Current session state for reload persistence
+export interface SessionState {
+  currentUrl: string | null;
+  currentEpisode: EpisodeInfo | null;
+  currentTime: number;
+  lastUpdated: Date;
+}
+
 // Error types
 export interface PlayerError {
   code: string;

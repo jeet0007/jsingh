@@ -5,6 +5,7 @@ import { HLSPlayerProps } from "../types";
 import classNames from "classnames";
 import { FaSpinner } from "react-icons/fa";
 import NextEpisodeButton from "./NextEpisodeButton";
+import { optimizedHLSConfig } from "../config/hlsConfig";
 
 const VidstackPlayer: React.FC<HLSPlayerProps> = ({
   url,
@@ -63,6 +64,27 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
     loadVidstack();
   }, [isClient, onError]);
 
+  // Configure HLS when player and URL are available
+  useEffect(() => {
+    if (!playerRef.current || !url) return;
+
+    const configureHLS = () => {
+      const player = playerRef.current;
+      if (player?.provider?.type === 'hls' && player.provider.library?.config) {
+        console.log('Configuring HLS with optimized settings...');
+        Object.assign(player.provider.library.config, optimizedHLSConfig);
+      }
+    };
+
+    // Try to configure immediately
+    configureHLS();
+
+    // Also try after a short delay to ensure provider is fully loaded
+    const timeoutId = setTimeout(configureHLS, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [url, VidstackComponents]);
+
   // Loading state
   if (!isClient || !VidstackComponents) {
     return (
@@ -116,6 +138,8 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
         src={url}
         storage="vidstack-player"
         autoPlay={autoPlay}
+        load="eager" // Use eager loading for immediate media loading
+        preferNativeHLS={false} // Use HLS.js for better control over segment loading
         onLoadedMetadata={(_: any) => onReady?.()}
         onEnded={onEpisodeEnd}
         onTimeUpdate={(detail: any, _: any) => {
@@ -131,6 +155,7 @@ const VidstackPlayer: React.FC<HLSPlayerProps> = ({
         currentTime={startTime || 0}
       >
         <MediaProvider />
+        {/* Plyr Layout with custom icons and controls */}
         <PlyrLayout
           icons={plyrLayoutIcons}
           slots={{

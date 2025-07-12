@@ -197,51 +197,53 @@ const URLInput: React.FC<URLInputProps> = ({
             />
             
             {/* Action Buttons */}
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
-              {/* Copy Button */}
-              {isClient && navigator.clipboard && url && (
-                <button
-                  type="button"
-                  onClick={handleCopy}
-                  disabled={disabled || isLoading}
-                  className={classNames(
-                    'p-2 rounded',
-                    'shadow-neumorphism active:shadow-neumorphismActive',
-                    'text-gray-600 dark:text-gray-400',
-                    'hover:text-gray-800 dark:hover:text-gray-200',
-                    'transition-all duration-200',
-                    disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                  )}
-                  title="Copy URL to clipboard"
-                >
-                  <FaCopy className="w-3 h-3" />
-                </button>
-              )}
-              
-              {/* Clear Button */}
-              {url && (
-                <button
-                  type="button"
-                  onClick={handleClear}
-                  disabled={disabled || isLoading}
-                  className={classNames(
-                    'p-2 rounded',
-                    'shadow-neumorphism active:shadow-neumorphismActive',
-                    'text-gray-600 dark:text-gray-400',
-                    'hover:text-red-600 dark:hover:text-red-400',
-                    'transition-all duration-200',
-                    disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-                  )}
-                  title="Clear URL"
-                >
-                  <FaTimes className="w-3 h-3" />
-                </button>
-              )}
-            </div>
+            {isClient && (
+              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-1">
+                {/* Copy Button */}
+                {navigator.clipboard && url && (
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    disabled={disabled || isLoading}
+                    className={classNames(
+                      'p-2 rounded',
+                      'shadow-neumorphism active:shadow-neumorphismActive',
+                      'text-gray-600 dark:text-gray-400',
+                      'hover:text-gray-800 dark:hover:text-gray-200',
+                      'transition-all duration-200',
+                      disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                    )}
+                    title="Copy URL to clipboard"
+                  >
+                    <FaCopy className="w-3 h-3" />
+                  </button>
+                )}
+                
+                {/* Clear Button */}
+                {url && (
+                  <button
+                    type="button"
+                    onClick={handleClear}
+                    disabled={disabled || isLoading}
+                    className={classNames(
+                      'p-2 rounded',
+                      'shadow-neumorphism active:shadow-neumorphismActive',
+                      'text-gray-600 dark:text-gray-400',
+                      'hover:text-red-600 dark:hover:text-red-400',
+                      'transition-all duration-200',
+                      disabled || isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+                    )}
+                    title="Clear URL"
+                  >
+                    <FaTimes className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Validation Status */}
-          {showValidation && (
+          {isClient && showValidation && (
             <div className="absolute right-2 top-1/2 transform -translate-y-1/2 mr-20">
               {validation.isValid ? (
                 <FaCheckCircle className="w-4 h-4 text-green-500" />
@@ -253,7 +255,7 @@ const URLInput: React.FC<URLInputProps> = ({
         </div>
 
         {/* Validation Messages */}
-        {showValidation && (
+        {isClient && showValidation && (
           <div className="space-y-2">
             {/* Error Message */}
             {!validation.isValid && validation.error && (

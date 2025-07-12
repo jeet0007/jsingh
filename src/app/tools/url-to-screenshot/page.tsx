@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Form from 'next/form';
 import { generateScreenshot } from './actions';
+import QueryProviderWrapper from '../../../components/QueryProviderWrapper';
 import { 
     FaSpinner, 
     FaDownload, 
@@ -12,7 +13,7 @@ import {
 } from 'react-icons/fa';
 import classNames from 'classnames';
 
-export default function UrlToScreenshot() {
+function UrlToScreenshotInner() {
     const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
     const [imageFormat, setImageFormat] = useState<'screenshot' | 'pageshot'>('screenshot');
     const [error, setError] = useState<string | null>(null);
@@ -202,5 +203,13 @@ export default function UrlToScreenshot() {
                 </div>
             )}
         </div>
+    );
+}
+
+export default function UrlToScreenshot() {
+    return (
+        <QueryProviderWrapper>
+            <UrlToScreenshotInner />
+        </QueryProviderWrapper>
     );
 }
