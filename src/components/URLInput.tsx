@@ -17,10 +17,14 @@ interface URLInputProps {
 
 // HLS URL validation regex
 const HLS_URL_PATTERNS = [
-  /\.m3u8$/i, // Standard HLS manifest
-  /\.m3u8\?/i, // HLS manifest with query parameters
-  /\/playlist\.m3u8/i, // Common playlist naming
-  /\/index\.m3u8/i, // Common index naming
+  /\.m3u8($|\?)/i, // Standard HLS manifest with or without query params
+  /\/playlist\.m3u8($|\?)/i, // Common playlist naming
+  /\/index\.m3u8($|\?)/i, // Common index naming
+  /master\.txt($|\?)/i, // Master playlist as .txt
+  /cf-master\.txt($|\?)/i, // CloudFlare master playlist
+  /index\.txt($|\?)/i, // Index playlist as .txt
+  /playlist\.txt($|\?)/i, // Playlist as .txt
+  /\.ts($|\?)/i, // Direct TS segment (also valid)
 ];
 
 // Episode detection patterns
@@ -51,7 +55,7 @@ const validateHLSUrl = (url: string): URLValidationResult => {
     return {
       isValid: false,
       isHLS: false,
-      error: 'URL must be an HLS stream (.m3u8)',
+      error: 'URL must be an HLS stream (.m3u8, .txt, or .ts)',
     };
   }
 
@@ -93,7 +97,7 @@ const URLInput: React.FC<URLInputProps> = ({
   isLoading = false,
   disabled = false,
   className = '',
-  placeholder = 'Enter HLS URL (e.g., https://example.com/stream/index.m3u8)',
+  placeholder = 'Enter HLS URL (e.g., https://example.com/stream/master.m3u8 or master.txt)',
 }) => {
   const [url, setUrl] = useState(initialUrl);
   const [validation, setValidation] = useState<URLValidationResult>({ isValid: false, isHLS: false });

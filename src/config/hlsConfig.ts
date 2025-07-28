@@ -65,8 +65,20 @@ export const optimizedHLSConfig = {
   
   // Additional optimizations for good networks
   xhrSetup: (xhr: XMLHttpRequest, url: string) => {
-    // Optimize for concurrent loading
-    xhr.setRequestHeader('Cache-Control', 'max-age=300'); // 5 min cache
+    // Add headers to bypass 403 errors - server requires same-domain referer
+    xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36');
+    xhr.setRequestHeader('Accept', '*/*');
+    xhr.setRequestHeader('Accept-Language', 'en-US,en;q=0.9');
+    
+    // Extract domain from URL and use as referer - this bypasses 403 protection
+    try {
+      const urlObj = new URL(url);
+      const domainReferer = `${urlObj.protocol}//${urlObj.hostname}/`;
+      xhr.setRequestHeader('Referer', domainReferer);
+    } catch (e) {
+      // Fallback if URL parsing fails
+      console.warn('Could not parse URL for referer:', url);
+    }
   }
 } as const;
 
