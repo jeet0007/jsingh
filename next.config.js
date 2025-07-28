@@ -8,6 +8,11 @@ const nextConfig = {
         hostname: "*.iconfinder.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "media.licdn.com",
+        pathname: "/**",
+      },
     ],
   },
   env: {},

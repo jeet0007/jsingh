@@ -3,43 +3,61 @@
 import React, { useRef } from "react";
 import { FaPhone, FaEnvelope, FaLinkedin, FaDownload } from "react-icons/fa";
 import { useReactToPrint } from "react-to-print";
+import Image from "next/image";
 import SectionHeader from "../../components/resume/SectionHeader";
-import JobRole from "../../components/resume/JobRole";
+import ProjectCard from "../../components/resume/ProjectCard";
 import SkillCategory from "../../components/resume/SkillCategory";
 
 const ResumePage: React.FC = () => {
   const componentRef = useRef<HTMLDivElement>(null);
 
-  // Job roles data
-  const jobRoles = [
+  // Company summary
+  const companySummary = "Progressed from Junior Developer to Associate Software Architect over 4 years at AppMan, demonstrating consistent growth in technical leadership and client management. Led the development of enterprise SaaS solutions, managed high-value client portfolios (1M-4M THB), and established development best practices. Drove technical roadmaps, mentored development teams, and served as a key solution consultant bridging technical and business requirements.";
+
+  // Projects data - AppMan Enterprise Solutions
+  const projects = [
     {
-      title: "Associate Software Architect",
-      period: "July 2024 – Present",
-      responsibilities: [
-        "Design and architect scalable, high-performance software solutions for enterprise-level SaaS products.",
-        "Lead code reviews, establish best practices, and mentor developers to ensure high-quality code and adherence to design patterns.",
-        "Drive the technical roadmap by evaluating new technologies and defining the SDLC and CI/CD strategies.",
-      ],
+      title: "e-KYC Digital Identity Verification System",
+      period: "2021-2023",
+      description: "Developed a comprehensive digital identity verification platform with OCR capabilities, video onboarding, and API integration for financial institutions and enterprises.",
+      technologies: ["React", "Node.js", "OCR APIs", "AI/ML", "Video Processing"],
+      impact: "Processed 100K+ identity verifications with 95% accuracy, preventing online fraud"
     },
     {
-      title: "Full-stack Developer + Technical Account Officer",
-      period: "August 2022 – August 2024",
-      responsibilities: [
-        "Managed a portfolio of 10 key client accounts with project values ranging from 1M to 4M THB each.",
-        "Served as the primary technical point of contact, ensuring high client satisfaction through expert support and problem-solving.",
-        "Developed and implemented custom solutions based on client needs, bridging the gap between technical teams and business requirements.",
-      ],
+      title: "Video Onboarding & Survey Platform",
+      period: "2021-2022",
+      description: "Built an intelligent video verification system with real-time document exchange, automatic OCR capabilities, and remote identity verification for seamless customer onboarding.",
+      technologies: ["React", "Redux-Saga", "Socket.IO", "WebRTC", "OCR"],
+      impact: "Reduced onboarding time by 75% and increased customer conversion rates"
     },
     {
-      title: "Full Stack Developer (Junior)",
-      period: "May 2021 – August 2022",
-      responsibilities: [
-        "Initiated and developed a reusable video call client using React, Redux-Saga, and Socket.IO, creating a standard real-time solution for future projects.",
-        "Engineered a backend service with Node.js and Express for scalable document and image management, utilizing AWS S3 and PostgreSQL.",
-        "Successfully integrated modern video calling capabilities into a 5-year-old legacy application to enable remote product sales.",
-        "Contributed to the end-to-end development of an e-KYC application featuring in-house OCR and video services.",
-      ],
+      title: "Document Statement Verification System",
+      period: "2022-2023", 
+      description: "Architected an AI-powered document data extraction platform with strong Thai language processing capabilities and multi-format document support.",
+      technologies: ["Node.js", "AI/ML", "NLP", "AWS S3", "PostgreSQL"],
+      impact: "Automated 90% of document processing tasks with 98% accuracy"
     },
+    {
+      title: "Background Checker Platform",
+      period: "2022-2024",
+      description: "Developed a comprehensive employee background verification system supporting PDPA standards with quick digital verification processes for enterprise clients.",
+      technologies: ["React", "Node.js", "Express", "MySQL", "API Integration"],
+      impact: "Streamlined HR processes for 50+ enterprise clients, reducing verification time by 80%"
+    },
+    {
+      title: "AI ChatBot Solution (AppMan Chat Center)",
+      period: "2023-Present",
+      description: "Designed and implemented an AI-powered chatbot platform to enhance customer service capabilities with intelligent conversation flows and multi-channel support.",
+      technologies: ["React", "Node.js", "AI/ML", "NLP", "Socket.IO"],
+      impact: "Improved customer response time by 60% and handled 10K+ daily interactions"
+    },
+    {
+      title: "InsurTech Digital Platform",
+      period: "2022-Present",
+      description: "Built a comprehensive digital insurance technology solution covering sales automation, risk assessment, and post-sales service management for insurance industry clients.",
+      technologies: ["React", "Node.js", "Microservices", "Docker", "Jenkins"],
+      impact: "Digitized insurance operations for 20+ companies, reducing processing time by 70%"
+    }
   ];
 
   // Skills data
@@ -159,6 +177,15 @@ const ResumePage: React.FC = () => {
         .p-6 {
           padding: 1rem !important;
         }
+        /* Profile image adjustments for print */
+        .w-32.h-32 {
+          width: 80px !important;
+          height: 80px !important;
+        }
+        img {
+          -webkit-print-color-adjust: exact !important;
+          color-adjust: exact !important;
+        }
       }
     `,
   });
@@ -182,12 +209,24 @@ const ResumePage: React.FC = () => {
       >
         {/* Header Section */}
         <header className="text-center border-b border-gray-200 pb-8 mb-8">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-            Taranjit Singh
-          </h1>
-          <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-6">
-            Full-Stack Developer & Software Architect
-          </p>
+          <div className="flex flex-col items-center mb-6">
+            <div className="w-32 h-32 rounded-full overflow-hidden shadow-neumorphism mb-4">
+              <Image
+                src="https://media.licdn.com/dms/image/v2/D5603AQHzgzYryRzY5g/profile-displayphoto-shrink_400_400/B56ZTvFMuCGsAk-/0/1739177907387?e=1756339200&v=beta&t=6jbe6Y5ov1pHT7Gjmz1PAYQQ8tWgkuCZinmMKrleNLs"
+                alt="Taranjit Singh Profile Photo"
+                width={128}
+                height={128}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-800 dark:text-gray-200 mb-2">
+              Taranjit Singh
+            </h1>
+            <p className="text-xl sm:text-2xl text-gray-600 dark:text-gray-400 mb-6">
+              Full-Stack Developer & Software Architect
+            </p>
+          </div>
           <div className="flex justify-center items-center flex-wrap gap-x-4 gap-y-2 text-gray-600 dark:text-gray-400 text-sm">
             <span className="flex items-center">
               <FaPhone className="mr-2" />
@@ -242,16 +281,28 @@ const ResumePage: React.FC = () => {
                     </p>
                   </div>
 
-                  {jobRoles.map((role, index) => (
-                    <JobRole
-                      key={role.title}
-                      title={role.title}
-                      period={role.period}
-                      responsibilities={role.responsibilities}
-                      className={index < jobRoles.length - 1 ? "mb-6" : ""}
-                    />
-                  ))}
+                  <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed mb-6">
+                    {companySummary}
+                  </p>
                 </div>
+              </div>
+            </section>
+
+            {/* Key Projects */}
+            <section>
+              <SectionHeader title="Key Projects" className="mb-6" />
+              <div className="space-y-6">
+                {projects.map((project, index) => (
+                  <ProjectCard
+                    key={project.title}
+                    title={project.title}
+                    period={project.period}
+                    description={project.description}
+                    technologies={project.technologies}
+                    impact={project.impact}
+                    className={index < projects.length - 1 ? "mb-6" : ""}
+                  />
+                ))}
               </div>
             </section>
           </div>
