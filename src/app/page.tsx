@@ -23,7 +23,7 @@ export default function Page() {
               className={classNames(
                 "btn btn-primary p-3 px-6 rounded-lg",
                 "shadow-neumorphism active:shadow-neumorphismActive",
-                "font-sans bg-primary text-white hover:bg-primary-dark",
+                "font-sans text-white hover:bg-primary-dark",
                 "transition-all duration-200 flex items-center gap-2"
               )}
             >
