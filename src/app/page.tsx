@@ -2,7 +2,8 @@ import classNames from "classnames";
 import React from "react";
 import ToolCard from "../components/ToolCard";
 import { ROUTES } from "../config/routes";
-import { FaPlay } from "react-icons/fa";
+import { FaPlay, FaUser } from "react-icons/fa";
+import Link from "next/link";
 
 export default function Page() {
 	return (
@@ -16,16 +17,20 @@ export default function Page() {
           <h1 className="text-5xl md:text-8xl font-bold mb-4 uppercase">
             Taranjit Singh
           </h1>
-          <button
-            type="button"
-            className={classNames(
-              "btn btn-primary p-2 rounded-lg",
-              "shadow-neumorphism active:shadow-neumorphismActive",
-              "font-sans bg-"
-            )}
-          >
-            Learn More About Me
-          </button>
+          <Link href={ROUTES.RESUME}>
+            <button
+              type="button"
+              className={classNames(
+                "btn btn-primary p-3 px-6 rounded-lg",
+                "shadow-neumorphism active:shadow-neumorphismActive",
+                "font-sans bg-primary text-white hover:bg-primary-dark",
+                "transition-all duration-200 flex items-center gap-2"
+              )}
+            >
+              <FaUser className="w-4 h-4" />
+              View My Resume
+            </button>
+          </Link>
         </div>
       </div>
       <div className="mt-10 text-center md:text-left grid sm:justify-center ">
