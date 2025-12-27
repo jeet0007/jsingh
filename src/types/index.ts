@@ -94,6 +94,14 @@ export interface EpisodeControlsProps {
   onAutoNextToggle: (enabled: boolean) => void;
 }
 
+// PDF Cropper types
+export interface CropArea {
+  x: number;      // Percentage from left (0-100)
+  y: number;      // Percentage from top (0-100)
+  width: number;  // Percentage of page width (0-100)
+  height: number; // Percentage of page height (0-100)
+}
+
 // Utility types
 export type Prettify<T> = {
   [K in keyof T]: T[K];

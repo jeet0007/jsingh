@@ -22,7 +22,7 @@
       }
     ],
     "strictNullChecks": true,
-    "baseUrl": "/",
+    "baseUrl": ".",
     "paths": {
       "@/*": [
         "./src/*"
@@ -53,6 +53,9 @@
       ],
       "@/public/*": [
         "./src/public/*"
+      ],
+      "@/stores/*": [
+        "./src/stores/*"
       ],
       "@/styles/*": [
         "./src/styles/*"

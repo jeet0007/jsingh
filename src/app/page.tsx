@@ -2,7 +2,7 @@ import classNames from "classnames";
 import React from "react";
 import ToolCard from "../components/ToolCard";
 import { ROUTES } from "../config/routes";
-import { FaPlay, FaUser } from "react-icons/fa";
+import { FaPlay, FaUser, FaCrop } from "react-icons/fa";
 import Link from "next/link";
 
 export default function Page() {
@@ -53,6 +53,12 @@ export default function Page() {
             name="HLS Player"
             description="Stream HLS videos with episode tracking"
             route={ROUTES.HLS_PLAYER}
+          />
+          <ToolCard
+            icon={FaCrop}
+            name="PDF Cropper"
+            description="Crop PDF pages to remove margins and unwanted content"
+            route={ROUTES.PDF_CROPPER}
           />
         </div>
       </div>
