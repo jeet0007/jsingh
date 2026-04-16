@@ -135,7 +135,7 @@ function FormatConverterInner() {
                     {/* Output Section */}
                     <div className="flex-1">
                         <div className="mb-2 flex justify-between items-center">
-                            <label htmlFor={outputId} className="text-sm font-medium text-gray-600">Output</label>
+                            <span id={outputId} className="text-sm font-medium text-gray-600">Output</span>
                             <button
                                 type="button"
                                 onClick={handleCopy}
@@ -152,7 +152,8 @@ function FormatConverterInner() {
                             </button>
                         </div>
                         <div
-                            id={outputId}
+                            aria-labelledby={outputId}
+                            role="region"
                             className={classNames(
                                 "w-full h-96 rounded-lg overflow-auto",
                                 "shadow-neumorphismInput",
