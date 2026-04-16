@@ -3,13 +3,14 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { FaHistory, FaArrowLeft, FaArrowRight, FaCog } from "react-icons/fa";
 import classNames from "classnames";
+import Link from "next/link";
 import URLInput from "../../../components/URLInput";
 import VidstackPlayer from "../../../components/VidstackPlayer";
 import PlaybackHistory from "../../../components/PlaybackHistory";
 import { usePlayerStore } from "../../../stores/playerStore";
 import { detectEpisodeFromURL } from "../../../utils/episodeDetection";
 import { getCurrentSession } from "../../../services/localStorage";
-import {
+import type {
   EpisodeInfo,
   PlaybackHistory as PlaybackHistoryType,
 } from "../../../types/index";
@@ -173,11 +174,15 @@ export default function HLSPlayerPage() {
     <div className="min-h-screen bg-background p-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-2">
-            HLS Player
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
+        <div className="mb-8">
+          <Link
+            href="/"
+            className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-6 transition-colors w-fit"
+          >
+            <FaArrowLeft className="w-3 h-3" /> Home
+          </Link>
+          <h1 className="text-4xl font-bold text-gray-800 mb-2">HLS Player</h1>
+          <p className="text-gray-500">
             Stream HLS videos with episode tracking and history
           </p>
         </div>
@@ -254,6 +259,7 @@ export default function HLSPlayerPage() {
 
                       <div className="flex items-center space-x-2">
                         <button
+                          type="button"
                           onClick={playPreviousEpisode}
                           disabled={currentEpisode.episode <= 1}
                           className={classNames(
@@ -271,6 +277,7 @@ export default function HLSPlayerPage() {
                         </button>
 
                         <button
+                          type="button"
                           onClick={playNextEpisode}
                           className={classNames(
                             "p-2 rounded",
@@ -313,6 +320,7 @@ export default function HLSPlayerPage() {
             {/* Control Buttons */}
             <div className="flex space-x-2">
               <button
+                type="button"
                 onClick={() => setHistoryVisible(!isHistoryVisible)}
                 className={classNames(
                   "flex-1 p-3 rounded-lg flex items-center justify-center space-x-2",
@@ -327,6 +335,7 @@ export default function HLSPlayerPage() {
               </button>
 
               <button
+                type="button"
                 onClick={() => setShowSettings(!showSettings)}
                 className={classNames(
                   "p-3 rounded-lg",

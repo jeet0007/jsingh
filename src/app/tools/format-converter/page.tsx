@@ -1,14 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { FaSpinner, FaCopy, FaExchangeAlt } from 'react-icons/fa';
-import classNames from 'classnames';
+import { useId, useState } from 'react';
+import Link from 'next/link';
 import dynamic from 'next/dynamic';
+import { useMutation } from '@tanstack/react-query';
+import classNames from 'classnames';
+import { FaArrowLeft, FaCopy, FaExchangeAlt, FaSpinner } from 'react-icons/fa';
 import QueryProviderWrapper from '../../../components/QueryProviderWrapper';
 import { convertFormat } from './actions';
 
-// Dynamic import for Prism renderer - only loads when needed
 const CodeHighlight = dynamic(
   () => import('./CodeHighlight'),
   {
@@ -22,6 +22,10 @@ const CodeHighlight = dynamic(
 );
 
 function FormatConverterInner() {
+    const inputLabelId = useId();
+    const formatSelectId = useId();
+    const outputId = useId();
+
     const [input, setInput] = useState('');
     const [format, setFormat] = useState<'json-to-yaml' | 'yaml-to-json'>('json-to-yaml');
     const [error, setError] = useState<string | null>(null);
@@ -51,18 +55,20 @@ function FormatConverterInner() {
     };
 
     return (
-        <div className="px-4 py-8 md:px-12">
-            <div className={classNames(
-                "min-w-4xl mx-auto p-6 rounded-lg",
-                "shadow-neumorphism",
-                "bg-background"
-            )}>
-                <h1 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-gray-200">
-                    Format Converter
-                </h1>
+        <div className="min-h-screen px-4 py-8 md:px-12">
+            <div className="max-w-6xl mx-auto">
+                <Link
+                    href="/"
+                    className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1 mb-8 transition-colors w-fit"
+                >
+                    <FaArrowLeft className="w-3 h-3" /> Home
+                </Link>
+
+                <h1 className="text-4xl font-bold text-gray-800 mb-2">Format Converter</h1>
+                <p className="text-gray-500 mb-8">Convert between JSON and YAML formats instantly</p>
 
                 {error && (
-                    <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                    <div className="mb-6 p-3 bg-red-100 border border-red-300 text-red-700 rounded-lg">
                         {error}
                     </div>
                 )}
@@ -71,16 +77,16 @@ function FormatConverterInner() {
                     {/* Input Section */}
                     <div className="flex-1">
                         <div className="mb-2 flex justify-between items-center">
-                            <label htmlFor="input-textarea" className="text-gray-700 dark:text-gray-300">Input</label>
+                            <label htmlFor={inputLabelId} className="text-sm font-medium text-gray-600">Input</label>
                             <select
-                                id="format-select"
+                                id={formatSelectId}
                                 value={format}
                                 onChange={(e) => setFormat(e.target.value as 'json-to-yaml' | 'yaml-to-json')}
                                 className={classNames(
-                                    "p-2 rounded-lg",
+                                    "p-2 rounded-lg text-sm",
                                     "shadow-neumorphismInput focus:shadow-neumorphismInputActive",
                                     "bg-background",
-                                    "text-gray-800 dark:text-gray-200",
+                                    "text-gray-800",
                                     "focus:outline-none"
                                 )}
                             >
@@ -89,7 +95,7 @@ function FormatConverterInner() {
                             </select>
                         </div>
                         <textarea
-                            id="input-textarea"
+                            id={inputLabelId}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder={format === 'json-to-yaml' ? 'Paste JSON here' : 'Paste YAML here'}
@@ -97,8 +103,8 @@ function FormatConverterInner() {
                                 "w-full h-96 p-4 rounded-lg font-mono text-sm",
                                 "shadow-neumorphismInput focus:shadow-neumorphismInputActive",
                                 "bg-background",
-                                "text-gray-800 dark:text-gray-200",
-                                "focus:outline-none"
+                                "text-gray-800",
+                                "focus:outline-none resize-none"
                             )}
                         />
                     </div>
@@ -106,15 +112,15 @@ function FormatConverterInner() {
                     {/* Convert Button */}
                     <div className="flex md:flex-col justify-center items-center">
                         <button
+                            type="button"
                             onClick={handleConvert}
                             disabled={convertMutation.isPending}
                             className={classNames(
                                 "p-3 rounded-full",
-                                "shadow-neumorphism active:shadow-neumorphismActive",
-                                "text-gray-800 dark:text-gray-200 bg-background",
+                                "shadow-neumorphism active:shadow-neumorphismActive hover:shadow-neumorphismHover",
+                                "text-gray-800 bg-background",
                                 "transition-shadow duration-200 ease-in-out",
-                                convertMutation.isPending ? 'opacity-50 cursor-not-allowed' : '',
-                                "hover:shadow-neumorphismHover"
+                                convertMutation.isPending ? 'opacity-50 cursor-not-allowed' : ''
                             )}
                             aria-label="Convert format"
                         >
@@ -129,24 +135,25 @@ function FormatConverterInner() {
                     {/* Output Section */}
                     <div className="flex-1">
                         <div className="mb-2 flex justify-between items-center">
-                            <label htmlFor="output-section" className="text-gray-700 dark:text-gray-300">Output</label>
+                            <span id={outputId} className="text-sm font-medium text-gray-600">Output</span>
                             <button
+                                type="button"
                                 onClick={handleCopy}
                                 disabled={!convertMutation.data}
                                 className={classNames(
-                                    "p-2 rounded-lg flex items-center gap-2",
-                                    "shadow-neumorphism active:shadow-neumorphismActive",
-                                    "text-gray-800 dark:text-gray-200 bg-background",
+                                    "p-2 rounded-lg flex items-center gap-2 text-sm",
+                                    "shadow-neumorphism active:shadow-neumorphismActive hover:shadow-neumorphismHover",
+                                    "text-gray-800 bg-background",
                                     "transition-shadow duration-200 ease-in-out",
-                                    !convertMutation.data ? 'opacity-50 cursor-not-allowed' : '',
-                                    "hover:shadow-neumorphismHover"
+                                    !convertMutation.data ? 'opacity-50 cursor-not-allowed' : ''
                                 )}
                             >
-                                <FaCopy /> Copy
+                                <FaCopy className="w-3 h-3" /> Copy
                             </button>
                         </div>
                         <div
-                            id="output-section"
+                            aria-labelledby={outputId}
+                            role="region"
                             className={classNames(
                                 "w-full h-96 rounded-lg overflow-auto",
                                 "shadow-neumorphismInput",
