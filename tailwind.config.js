@@ -2,13 +2,6 @@
 module.exports = {
 	content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
 	theme: {
-		colors: {
-			primary: "#708090",
-			secondary: "#2D4CC8",
-			tertiary: "#e6e7ee",
-			text: "#EEEEEE",
-			background: "#EEEEEE",
-		},
 		neumorphismSize: {
 			xs: "0.05em",
 			sm: "0.1em",
@@ -27,6 +20,9 @@ module.exports = {
 			serif: ["Merriweather", "serif"],
 		},
 		extend: {
+			colors: {
+				background: "#EEEEEE",
+			},
 			spacing: {
 				128: "32rem",
 				144: "36rem",
@@ -35,19 +31,11 @@ module.exports = {
 				"4xl": "2rem",
 			},
 			boxShadow: {
-				neumorphism:
-					"-6px -6px 14px rgba(255,255,255,0.4), -6px -6px 10px rgba(255,255,255,0.3), 6px 6px 8px rgba(255,255,255,0.1), 6px 6px 10px rgba(0,0,0,0.1)",
-				neumorphismHover:
-					"-2px -2px 6px rgba(255, 255, 255, .6),\
-              -2px -2px 4px rgba(255, 255, 255, .4),\
-              2px 2px 2px rgba(255, 255, 255, .05),\
-              2px 2px 4px rgba(0, 0, 0, .1)",
-				neumorphismActive:
-					"2px 2px 2px rgba(255,255,255,0.5), inset -1px -1px 2px rgba(255,255,255,0.3), inset 1px 1px 2px rgba(0,0,0,0.1), inset 1px 2px 3px rgba(0,0,0,0.15)",
-				'neumorphism': '4px 4px 6px 0 rgba(0, 0, 0, 0.1), -4px -4px 6px 0 rgba(255, 255, 255, 0.7)',
-				'neumorphismActive': 'inset 4px 4px 6px 0 rgba(0, 0, 0, 0.1), inset -4px -4px 6px 0 rgba(255, 255, 255, 0.7)',
-				'neumorphismInput': '2px 2px 4px 0 rgba(0, 0, 0, 0.1), -2px -2px 4px 0 rgba(255, 255, 255, 0.7)',
-				'neumorphismInputActive': 'inset 2px 2px 4px 0 rgba(0, 0, 0, 0.1), inset -2px -2px 4px 0 rgba(255, 255, 255, 0.7)'
+				neumorphism: "4px 4px 6px 0 rgba(0, 0, 0, 0.1), -4px -4px 6px 0 rgba(255, 255, 255, 0.7)",
+				neumorphismHover: "-2px -2px 6px rgba(255, 255, 255, .6), -2px -2px 4px rgba(255, 255, 255, .4), 2px 2px 2px rgba(255, 255, 255, .05), 2px 2px 4px rgba(0, 0, 0, .1)",
+				neumorphismActive: "inset 4px 4px 6px 0 rgba(0, 0, 0, 0.1), inset -4px -4px 6px 0 rgba(255, 255, 255, 0.7)",
+				neumorphismInput: "2px 2px 4px 0 rgba(0, 0, 0, 0.1), -2px -2px 4px 0 rgba(255, 255, 255, 0.7)",
+				neumorphismInputActive: "inset 2px 2px 4px 0 rgba(0, 0, 0, 0.1), inset -2px -2px 4px 0 rgba(255, 255, 255, 0.7)",
 			},
 			animation: {
 				'spin-slow': 'spin 1.5s linear infinite'
