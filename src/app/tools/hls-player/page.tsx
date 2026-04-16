@@ -10,7 +10,7 @@ import PlaybackHistory from "../../../components/PlaybackHistory";
 import { usePlayerStore } from "../../../stores/playerStore";
 import { detectEpisodeFromURL } from "../../../utils/episodeDetection";
 import { getCurrentSession } from "../../../services/localStorage";
-import {
+import type {
   EpisodeInfo,
   PlaybackHistory as PlaybackHistoryType,
 } from "../../../types/index";
@@ -259,6 +259,7 @@ export default function HLSPlayerPage() {
 
                       <div className="flex items-center space-x-2">
                         <button
+                          type="button"
                           onClick={playPreviousEpisode}
                           disabled={currentEpisode.episode <= 1}
                           className={classNames(
@@ -276,6 +277,7 @@ export default function HLSPlayerPage() {
                         </button>
 
                         <button
+                          type="button"
                           onClick={playNextEpisode}
                           className={classNames(
                             "p-2 rounded",
@@ -318,6 +320,7 @@ export default function HLSPlayerPage() {
             {/* Control Buttons */}
             <div className="flex space-x-2">
               <button
+                type="button"
                 onClick={() => setHistoryVisible(!isHistoryVisible)}
                 className={classNames(
                   "flex-1 p-3 rounded-lg flex items-center justify-center space-x-2",
@@ -332,6 +335,7 @@ export default function HLSPlayerPage() {
               </button>
 
               <button
+                type="button"
                 onClick={() => setShowSettings(!showSettings)}
                 className={classNames(
                   "p-3 rounded-lg",

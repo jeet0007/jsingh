@@ -96,13 +96,11 @@ export default function Page() {
 								infrastructure.
 							</p>
 							<div className="flex gap-3">
-								<Link href={ROUTES.RESUME}>
-									<button
-										type="button"
-										className="flex items-center gap-2 px-5 py-2.5 rounded-lg shadow-neumorphism active:shadow-neumorphismActive font-medium text-gray-800 text-sm transition-shadow duration-200"
-									>
-										Resume <FaArrowRight className="w-3 h-3" />
-									</button>
+								<Link
+									href={ROUTES.RESUME}
+									className="flex items-center gap-2 px-5 py-2.5 rounded-lg shadow-neumorphism active:shadow-neumorphismActive font-medium text-gray-800 text-sm transition-shadow duration-200"
+								>
+									Resume <FaArrowRight className="w-3 h-3" />
 								</Link>
 								<a
 									href="https://www.linkedin.com/in/taranjeet-singh-dev/"

@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { FaSpinner, FaCopy, FaExchangeAlt, FaArrowLeft } from 'react-icons/fa';
-import classNames from 'classnames';
-import dynamic from 'next/dynamic';
+import { useId, useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { useMutation } from '@tanstack/react-query';
+import classNames from 'classnames';
+import { FaArrowLeft, FaCopy, FaExchangeAlt, FaSpinner } from 'react-icons/fa';
 import QueryProviderWrapper from '../../../components/QueryProviderWrapper';
 import { convertFormat } from './actions';
 
@@ -22,6 +22,10 @@ const CodeHighlight = dynamic(
 );
 
 function FormatConverterInner() {
+    const inputLabelId = useId();
+    const formatSelectId = useId();
+    const outputId = useId();
+
     const [input, setInput] = useState('');
     const [format, setFormat] = useState<'json-to-yaml' | 'yaml-to-json'>('json-to-yaml');
     const [error, setError] = useState<string | null>(null);
@@ -73,9 +77,9 @@ function FormatConverterInner() {
                     {/* Input Section */}
                     <div className="flex-1">
                         <div className="mb-2 flex justify-between items-center">
-                            <label htmlFor="input-textarea" className="text-sm font-medium text-gray-600">Input</label>
+                            <label htmlFor={inputLabelId} className="text-sm font-medium text-gray-600">Input</label>
                             <select
-                                id="format-select"
+                                id={formatSelectId}
                                 value={format}
                                 onChange={(e) => setFormat(e.target.value as 'json-to-yaml' | 'yaml-to-json')}
                                 className={classNames(
@@ -91,7 +95,7 @@ function FormatConverterInner() {
                             </select>
                         </div>
                         <textarea
-                            id="input-textarea"
+                            id={inputLabelId}
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder={format === 'json-to-yaml' ? 'Paste JSON here' : 'Paste YAML here'}
@@ -131,7 +135,7 @@ function FormatConverterInner() {
                     {/* Output Section */}
                     <div className="flex-1">
                         <div className="mb-2 flex justify-between items-center">
-                            <label htmlFor="output-section" className="text-sm font-medium text-gray-600">Output</label>
+                            <label htmlFor={outputId} className="text-sm font-medium text-gray-600">Output</label>
                             <button
                                 type="button"
                                 onClick={handleCopy}
@@ -148,7 +152,7 @@ function FormatConverterInner() {
                             </button>
                         </div>
                         <div
-                            id="output-section"
+                            id={outputId}
                             className={classNames(
                                 "w-full h-96 rounded-lg overflow-auto",
                                 "shadow-neumorphismInput",
