@@ -1,6 +1,6 @@
 'use client';
 
-import { useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Form from 'next/form';
@@ -18,6 +18,15 @@ function UrlToScreenshotInner() {
     const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
     const [imageFormat, setImageFormat] = useState<'screenshot' | 'pageshot'>('screenshot');
     const [error, setError] = useState<string | null>(null);
+    const objectUrlRef = useRef<string | null>(null);
+
+    useEffect(() => {
+        return () => {
+            if (objectUrlRef.current) {
+                URL.revokeObjectURL(objectUrlRef.current);
+            }
+        };
+    }, []);
 
     const validateUrl = (url: string) => {
         try {
@@ -32,7 +41,11 @@ function UrlToScreenshotInner() {
         mutationFn: (data: { url: string; format: 'screenshot' | 'pageshot' }) =>
             generateScreenshot(data.url, data.format),
         onSuccess: (blob) => {
+            if (objectUrlRef.current) {
+                URL.revokeObjectURL(objectUrlRef.current);
+            }
             const imageUrl = URL.createObjectURL(blob);
+            objectUrlRef.current = imageUrl;
             setScreenshotUrl(imageUrl);
             setError(null);
         },
