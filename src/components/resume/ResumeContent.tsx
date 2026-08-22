@@ -88,7 +88,7 @@ const skillCategories = [
 	},
 	{
 		title: "DevOps & CI/CD",
-		skills: ["Docker", "Jenkins", "Argo CD", "AWS S3"],
+		skills: ["Docker", "Jenkins", "Argo CD", "AWS"],
 		color: "orange" as const,
 	},
 	{
@@ -222,6 +222,21 @@ const ResumeContent: React.FC<ResumeContentProps> = ({ forwardRef }) => {
 									color={category.color}
 								/>
 							))}
+						</div>
+					</section>
+
+					{/* Certifications */}
+					<section>
+						<SectionHeader title="Certifications" />
+						<div className="space-y-3 text-gray-700 dark:text-gray-300">
+							<div className="flex justify-between items-baseline">
+								<span className="font-semibold text-gray-800 dark:text-gray-200">
+									AWS Certified AI Practitioner
+								</span>
+								<span className="text-gray-600 dark:text-gray-400 text-sm">
+									2026
+								</span>
+							</div>
 						</div>
 					</section>
 
